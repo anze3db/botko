@@ -6,7 +6,7 @@ import sqlite3
 logger = logging.getLogger("uvicorn.db")
 
 # DB INIT
-DATABASE_URL = os.environ.get("SQLITE_URL", ":memory:")
+DATABASE_URL = os.environ.get("DATABASE_URL", ":memory:")
 
 logger.info("📀 Loading data from %s", DATABASE_URL)
 connection = sqlite3.connect(

@@ -79,5 +79,6 @@ async def endpoint(req):
 
 
 api = Starlette(
-    debug=True, routes=[Route("/slack/events", endpoint=endpoint, methods=["POST"])]
+    debug=os.environ.get("DEBUG", "") == "True",
+    routes=[Route("/slack/events", endpoint=endpoint, methods=["POST"])],
 )
