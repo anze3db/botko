@@ -4,9 +4,25 @@
 #
 #    pip-compile requirements.in
 #
+anyio==3.4.0
+    # via starlette
+asgiref==3.4.1
+    # via uvicorn
+click==8.0.3
+    # via uvicorn
+h11==0.12.0
+    # via uvicorn
+idna==3.3
+    # via anyio
 python-dotenv==0.19.2
     # via -r requirements.in
 slack-bolt==1.11.1
     # via -r requirements.in
 slack-sdk==3.13.0
     # via slack-bolt
+sniffio==1.2.0
+    # via anyio
+starlette==0.16.0
+    # via -r requirements.in
+uvicorn==0.16.0
+    # via -r requirements.in

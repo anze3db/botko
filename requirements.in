@@ -1,2 +1,4 @@
+starlette
 python-dotenv
 slack_bolt
+uvicorn
