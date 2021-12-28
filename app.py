@@ -3,7 +3,10 @@ import re
 
 from dotenv import load_dotenv
 from slack_bolt import App
+from slack_bolt.adapter.starlette import SlackRequestHandler
 from slack_sdk.web.client import WebClient
+from starlette.applications import Starlette
+from starlette.routing import Route
 
 from db import connection_context
 from models import karma_leaderboard, parse_karma_from_text
@@ -66,5 +69,15 @@ def update_home_tab(client, event, context, logger):
 
 
 # Start your app
-if __name__ == "__main__":
-    app.start(port=int(os.environ.get("PORT", 3000)))
+
+
+app_handler = SlackRequestHandler(app)
+
+
+async def endpoint(req):
+    return await app_handler.handle(req)
+
+
+api = Starlette(
+    debug=True, routes=[Route("/slack/events", endpoint=endpoint, methods=["POST"])]
+)
