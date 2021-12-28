@@ -1,11 +1,11 @@
-import pytest
 import time
-from slack_sdk.web.client import WebClient
-from app import find_karma, say_hello, update_home_tab
-from db import connection_context as db_connection_context
-
 from unittest.mock import Mock, create_autospec
 
+import pytest
+from slack_sdk.web.client import WebClient
+
+from app import find_karma, say_hello, update_home_tab
+from db import connection_context as db_connection_context
 from models import insert_karma
 
 
