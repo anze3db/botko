@@ -1,10 +1,12 @@
 import os
 import re
 
-from slack_bolt import App
-
 from dotenv import load_dotenv
+from slack_bolt import App
 from slack_sdk.web.client import WebClient
+
+from db import connection_context
+from models import karma_leaderboard, parse_karma_from_text
 
 load_dotenv()
 
@@ -21,19 +23,19 @@ def say_hello(message, say):
     say(f"Hi there, <@{user}>!")
 
 
-@app.message(re.compile(r"\+\+"))
-def find_karma(client: WebClient, message):
-    text = message.get("text", "")
+@app.message(re.compile(r"\+\+"), middleware=[connection_context])
+def find_karma(client: WebClient, context, message):
+    if parse_karma_from_text(message, context["connection"]):
+        client.reactions_add(
+            channel=message["channel"], name="thumbsup", timestamp=message["ts"]
+        )
 
-    client.reactions_add(
-        channel=message["channel"], name="thumbsup", timestamp=message["ts"]
-    )
 
-
-@app.event("app_home_opened")
-def update_home_tab(client, event, logger):
+@app.event("app_home_opened", middleware=[connection_context])
+def update_home_tab(client, event, context, logger):
     try:
         # views.publish is the method that your app uses to push a view to the Home tab
+        users = karma_leaderboard(context["connection"])
         client.views_publish(
             # the user that opened your app's app home
             user_id=event["user"],
@@ -47,26 +49,20 @@ def update_home_tab(client, event, logger):
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": "*Welcome to your _App's Home_* :tada:",
+                            "text": f"Hey there, <@{event['user']}>!",
                         },
                     },
                     {"type": "divider"},
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "mrkdwn",
-                            "text": "This button won't do much for now but you can set up a listener for it using the `actions()` method and passing its unique `action_id`. See an example in the `examples` folder within your Bolt app.",
-                        },
-                    },
-                    {
-                        "type": "actions",
-                        "elements": [
-                            {
-                                "type": "button",
-                                "text": {"type": "plain_text", "text": "Click me!"},
-                            }
-                        ],
-                    },
+                    *[
+                        {
+                            "type": "section",
+                            "text": {
+                                "type": "mrkdwn",
+                                "text": f"<@{user['user']}> has {user['count']} karma.",
+                            },
+                        }
+                        for user in users
+                    ],
                 ],
             },
         )
