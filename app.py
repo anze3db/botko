@@ -33,42 +33,36 @@ def find_karma(client: WebClient, context, message):
 
 @app.event("app_home_opened", middleware=[connection_context])
 def update_home_tab(client, event, context, logger):
-    try:
-        # views.publish is the method that your app uses to push a view to the Home tab
-        users = karma_leaderboard(context["connection"])
-        client.views_publish(
-            # the user that opened your app's app home
-            user_id=event["user"],
-            # the view object that appears in the app home
-            view={
-                "type": "home",
-                "callback_id": "home_view",
-                # body of the view
-                "blocks": [
+
+    users = karma_leaderboard(context["connection"])
+    client.views_publish(
+        user_id=event["user"],
+        view={
+            "type": "home",
+            "callback_id": "home_view",
+            # body of the view
+            "blocks": [
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": f"Hey there, <@{event['user']}>!",
+                    },
+                },
+                {"type": "divider"},
+                *[
                     {
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": f"Hey there, <@{event['user']}>!",
+                            "text": f"<@{user['user']}> has {user['count']} karma.",
                         },
-                    },
-                    {"type": "divider"},
-                    *[
-                        {
-                            "type": "section",
-                            "text": {
-                                "type": "mrkdwn",
-                                "text": f"<@{user['user']}> has {user['count']} karma.",
-                            },
-                        }
-                        for user in users
-                    ],
+                    }
+                    for user in users
                 ],
-            },
-        )
-
-    except Exception as e:
-        logger.error(f"Error publishing home tab: {e}")
+            ],
+        },
+    )
 
 
 # Start your app

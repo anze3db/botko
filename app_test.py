@@ -1,4 +1,5 @@
 import pytest
+import time
 from slack_sdk.web.client import WebClient
 from app import find_karma, say_hello, update_home_tab
 from db import connection_context as db_connection_context
@@ -102,17 +103,23 @@ def test_say_hello():
     say_mock.assert_called_with("Hi there, <@123>!")
 
 
-def test_update_home_tab(client_mock, connection_context):
+def test_update_home_tab(client_mock: Mock, connection_context):
     connection = connection_context["connection"]
     insert_karma(
         connection,
         [
-            ("ch1", "11234.123", "U1ASHDJAS"),
-            ("ch1", "11234.124", "U1ASHDJAS"),
-            ("ch1", "11234.125", "U1ASHDJAS"),
-            ("ch1", "11234.126", "U2ASHDJAS"),
-            ("ch1", "11234.127", "U2ASHDJAS"),
+            ("C02SBSSCMR7", f"{time.time()-60*60*60*24*700}", "U123123"),
+            ("C02SBSSCMR7", f"{time.time()}", "U02RW93RGBX"),
+            ("C02SBSSCMR7", f"{time.time()}", "U02RW93RGBX"),
+            ("C02SBSSCMR7", f"{time.time()}", "U6LJ2A03A"),
+            ("C02SBSSCMR7", f"{time.time()}", "U6LJ2A03A"),
+            ("C02SBSSCMR7", f"{time.time()}", "U6LJ2A03A"),
         ],
     )
     update_home_tab(client_mock, dict(user="123"), connection_context, Mock())
     client_mock.views_publish.assert_called()
+    view = client_mock.views_publish.call_args.kwargs["view"]
+    assert view["type"] == "home"
+    assert "<@U6LJ2A03A> has 3 karma." in str(view["blocks"])
+    assert "<@U02RW93RGBX> has 2 karma." in str(view["blocks"])
+    assert "<@U123123> has 1 karma." not in str(view["blocks"])
