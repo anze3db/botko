@@ -8,11 +8,10 @@ from slack_sdk.web.client import WebClient
 from starlette.applications import Starlette
 from starlette.routing import Route
 
+load_dotenv()  # Needs to be run before we import db
+
 from db import connection_context
 from models import karma_leaderboard, parse_karma_from_text
-
-load_dotenv()
-
 
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
