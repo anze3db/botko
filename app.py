@@ -11,7 +11,7 @@ from starlette.routing import Route
 load_dotenv()  # Needs to be run before we import db
 
 from db import connection_context
-from models import karma_leaderboard, parse_karma_from_text
+from models import fetch_karma_leaderboard, insert_karma, parse_karma_from_text
 
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
@@ -26,8 +26,16 @@ def say_hello(message, say):
 
 
 @app.message(re.compile(r"\+\+"), middleware=[connection_context])
-def find_karma(client: WebClient, context, message):
-    if parse_karma_from_text(message, context["connection"]):
+def handle_message_with_karma(client: WebClient, context, message):
+    users = parse_karma_from_text(message.get("text"))
+    users_without_current_user = [name for name in users if name != message["user"]]
+    if users_without_current_user:
+        insert_karma(
+            context["connection"],
+            message["channel"],
+            message["ts"],
+            users_without_current_user,
+        )
         client.reactions_add(
             channel=message["channel"], name="botko", timestamp=message["ts"]
         )
@@ -36,7 +44,7 @@ def find_karma(client: WebClient, context, message):
 @app.event("app_home_opened", middleware=[connection_context])
 def update_home_tab(client, event, context, logger):
 
-    users = karma_leaderboard(context["connection"])
+    users = fetch_karma_leaderboard(context["connection"])
     client.views_publish(
         user_id=event["user"],
         view={
@@ -65,9 +73,6 @@ def update_home_tab(client, event, context, logger):
             ],
         },
     )
-
-
-# Start your app
 
 
 app_handler = SlackRequestHandler(app)

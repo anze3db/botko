@@ -3,24 +3,22 @@ import sqlite3
 from datetime import datetime
 
 
-def insert_karma(connection: sqlite3.Connection, values: list[tuple[str, str, str]]):
+def insert_karma(
+    connection: sqlite3.Connection, channel: str, ts: str, users: list[str]
+) -> None:
+    values = [(channel, ts, user) for user in users]
     connection.executemany(
         "INSERT INTO karma (channel, ts, user) values (?, ?, ?)", values
     )
 
 
-def parse_karma_from_text(message: dict[str, str], connection: sqlite3.Connection):
-    text = message.get("text", "")
-    names = [
-        (message["channel"], message["ts"], match)
-        for match in re.findall(r"<@(U[A-Z0-9]*)>.?\+\+", text)
-    ]
-    insert_karma(connection, names)
-    return names
-
-
-def karma_leaderboard(connection: sqlite3.Connection):
+def fetch_karma_leaderboard(connection: sqlite3.Connection) -> sqlite3.Cursor:
     return connection.execute(
         "SELECT COUNT(*) as count, user FROM karma WHERE strftime('%Y', datetime(ts, 'unixepoch')) = ? GROUP BY user ORDER BY count DESC",
         (str(datetime.now().year),),
     )
+
+
+def parse_karma_from_text(text: str) -> list[str]:
+    users = [match for match in re.findall(r"<@(U[A-Z0-9]*)>.?\+\+", text)]
+    return users

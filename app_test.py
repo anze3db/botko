@@ -4,7 +4,7 @@ from unittest.mock import Mock, create_autospec
 import pytest
 from slack_sdk.web.client import WebClient
 
-from app import find_karma, say_hello, update_home_tab
+from app import handle_message_with_karma, say_hello, update_home_tab
 from db import connection_context as db_connection_context
 from models import insert_karma
 
@@ -32,13 +32,14 @@ def connection_context():
     ],
 )
 def test_find_karma(client_mock, connection_context, text):
-    find_karma(
+    handle_message_with_karma(
         client_mock,
         connection_context,
         dict(
             text=text,
             channel="my_channel",
             ts="123",
+            user="U2RMSKJDH",
         ),
     )
     connection = connection_context["connection"]
@@ -56,13 +57,14 @@ def test_find_karma(client_mock, connection_context, text):
     ],
 )
 def test_find_multiple_karma(client_mock, connection_context, text):
-    find_karma(
+    handle_message_with_karma(
         client_mock,
         connection_context,
         dict(
             text=text,
             channel="my_channel",
             ts="123",
+            user="U2RMSKJDH",
         ),
     )
     connection = connection_context["connection"]
@@ -77,23 +79,41 @@ def test_find_multiple_karma(client_mock, connection_context, text):
     "text",
     [
         "++",
-        "My man++",
+        "My man+++++",
         "++Hey there <@U02RW93RGBX>\xa0 thing++ <@U02RMSKJDH>\xa0 other thing++",
     ],
 )
 def test_find_multiple_karma(client_mock, connection_context, text):
-    find_karma(
+    handle_message_with_karma(
         client_mock,
         connection_context,
         dict(
             text=text,
             channel="my_channel",
             ts="123",
+            user="U2RMSKJDH",
         ),
     )
     connection = connection_context["connection"]
 
     assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 0, text
+    client_mock.reactions_add.assert_not_called()
+
+
+def test_self_karma(client_mock, connection_context):
+    handle_message_with_karma(
+        client_mock,
+        connection_context,
+        dict(
+            text="I am giving <@U02RMSKJDH>++",
+            channel="my_channel",
+            ts="123",
+            user="U02RMSKJDH",
+        ),
+    )
+    connection = connection_context["connection"]
+
+    assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 0
     client_mock.reactions_add.assert_not_called()
 
 
@@ -107,14 +127,15 @@ def test_update_home_tab(client_mock: Mock, connection_context):
     connection = connection_context["connection"]
     insert_karma(
         connection,
-        [
-            ("C02SBSSCMR7", f"{time.time()-60*60*60*24*700}", "U123123"),
-            ("C02SBSSCMR7", f"{time.time()}", "U02RW93RGBX"),
-            ("C02SBSSCMR7", f"{time.time()}", "U02RW93RGBX"),
-            ("C02SBSSCMR7", f"{time.time()}", "U6LJ2A03A"),
-            ("C02SBSSCMR7", f"{time.time()}", "U6LJ2A03A"),
-            ("C02SBSSCMR7", f"{time.time()}", "U6LJ2A03A"),
-        ],
+        channel="C02SBSSCMR7",
+        ts=f"{time.time()-60*60*60*24*700}",
+        users=["U123123"],
+    )
+    insert_karma(
+        connection,
+        channel="C02SBSSCMR7",
+        ts=f"{time.time()}",
+        users=["U02RW93RGBX", "U02RW93RGBX", "U6LJ2A03A", "U6LJ2A03A", "U6LJ2A03A"],
     )
     update_home_tab(client_mock, dict(user="123"), connection_context, Mock())
     client_mock.views_publish.assert_called()
