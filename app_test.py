@@ -45,7 +45,7 @@ def test_find_karma(client_mock, connection_context, text):
 
     assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 1, text
     client_mock.reactions_add.assert_called_with(
-        channel="my_channel", name="thumbsup", timestamp="123"
+        channel="my_channel", name="botko", timestamp="123"
     )
 
 
@@ -69,7 +69,7 @@ def test_find_multiple_karma(client_mock, connection_context, text):
 
     assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 2, text
     client_mock.reactions_add.assert_called_with(
-        channel="my_channel", name="thumbsup", timestamp="123"
+        channel="my_channel", name="botko", timestamp="123"
     )
 
 

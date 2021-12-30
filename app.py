@@ -29,7 +29,7 @@ def say_hello(message, say):
 def find_karma(client: WebClient, context, message):
     if parse_karma_from_text(message, context["connection"]):
         client.reactions_add(
-            channel=message["channel"], name="thumbsup", timestamp=message["ts"]
+            channel=message["channel"], name="botko", timestamp=message["ts"]
         )
 
 
