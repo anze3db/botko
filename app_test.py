@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 from unittest.mock import Mock, create_autospec
 
 import pytest
@@ -173,6 +174,7 @@ def test_update_home_tab(client_mock: Mock, connection_context):
     client_mock.views_publish.assert_called()
     view = client_mock.views_publish.call_args.kwargs["view"]
     assert view["type"] == "home"
+    assert f"{datetime.now().year} Karma Leaderboard" in str(view["blocks"])
     assert "<@U6LJ2A03A> has 3 karma." in str(view["blocks"])
     assert "<@U02RW93RGBX> has 2 karma." in str(view["blocks"])
     assert "<@U123123> has 1 karma." not in str(view["blocks"])
