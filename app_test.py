@@ -115,6 +115,35 @@ def test_self_karma(client_mock, connection_context):
 
     assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 0
     client_mock.reactions_add.assert_not_called()
+    client_mock.chat_postMessage.assert_called_with(
+        channel="my_channel",
+        text=f"I can't let you do that <@U02RMSKJDH>. You can't give karma to yourself.",
+        ts="123",
+    )
+
+
+def test_self_karma_and_other_karma(client_mock, connection_context):
+    handle_message_with_karma(
+        client_mock,
+        connection_context,
+        dict(
+            text="I am giving <@U02RMSKJDH>++ <@UOTHRUSR>++ ",
+            channel="my_channel",
+            ts="123",
+            user="U02RMSKJDH",
+        ),
+    )
+    connection = connection_context["connection"]
+
+    assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 1
+    client_mock.reactions_add.assert_called_with(
+        channel="my_channel", name="botko", timestamp="123"
+    )
+    client_mock.chat_postMessage.assert_called_with(
+        channel="my_channel",
+        text=f"I can't let you do that <@U02RMSKJDH>. You can't give karma to yourself.",
+        ts="123",
+    )
 
 
 def test_say_hello():
