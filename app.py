@@ -100,3 +100,19 @@ api = Starlette(
     debug=os.environ.get("DEBUG", "") == "True",
     routes=[Route("/slack/events", endpoint=endpoint, methods=["POST"])],
 )
+
+if sentry_dns := os.environ.get("SENTRY_DNS"):
+    import logging
+
+    import sentry_sdk
+    from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
+
+    logger = logging.getLogger("uvicorn.app")
+
+    logger.info("👩‍🚒 Setting up Sentry")
+
+    sentry_sdk.init(
+        sentry_dns,
+        traces_sample_rate=1.0,
+    )
+    api = SentryAsgiMiddleware(api)
