@@ -63,7 +63,7 @@ def update_home_tab(client, event, context, logger):
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"Hey there, <@{event['user']}>! If you'd like to take a look under the hood my source code is <https://github.com/anze3db/botko|here> :blush:",
+                        "text": f"Hey there, <@{event['user']}>! If you'd like to take a look under the hood, my source code is <https://github.com/anze3db/botko|here> :blush:",
                     },
                 },
                 {"type": "divider"},
