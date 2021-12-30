@@ -48,6 +48,7 @@ def test_find_karma(client_mock, connection_context, text):
     client_mock.reactions_add.assert_called_with(
         channel="my_channel", name="botko", timestamp="123"
     )
+    client_mock.chat_postMessage.assert_not_called()
 
 
 @pytest.mark.parametrize(
@@ -73,6 +74,7 @@ def test_find_multiple_karma(client_mock, connection_context, text):
     client_mock.reactions_add.assert_called_with(
         channel="my_channel", name="botko", timestamp="123"
     )
+    client_mock.chat_postMessage.assert_not_called()
 
 
 @pytest.mark.parametrize(
@@ -98,6 +100,7 @@ def test_find_multiple_karma(client_mock, connection_context, text):
 
     assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 0, text
     client_mock.reactions_add.assert_not_called()
+    client_mock.chat_postMessage.assert_not_called()
 
 
 def test_self_karma(client_mock, connection_context):
@@ -118,7 +121,7 @@ def test_self_karma(client_mock, connection_context):
     client_mock.chat_postMessage.assert_called_with(
         channel="my_channel",
         text=f"I can't let you do that <@U02RMSKJDH>. You can't give karma to yourself.",
-        ts="123",
+        thread_ts="123",
     )
 
 
@@ -142,7 +145,7 @@ def test_self_karma_and_other_karma(client_mock, connection_context):
     client_mock.chat_postMessage.assert_called_with(
         channel="my_channel",
         text=f"I can't let you do that <@U02RMSKJDH>. You can't give karma to yourself.",
-        ts="123",
+        thread_ts="123",
     )
 
 

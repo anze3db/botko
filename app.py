@@ -39,11 +39,11 @@ def handle_message_with_karma(client: WebClient, context, message):
         client.reactions_add(
             channel=message["channel"], name="botko", timestamp=message["ts"]
         )
-    if len(users) != users_without_current_user:
+    if users != users_without_current_user:
         client.chat_postMessage(
             channel=message["channel"],
             text=f"I can't let you do that <@{message['user']}>. You can't give karma to yourself.",
-            ts=message["ts"],
+            thread_ts=message["ts"],
         )
 
 
