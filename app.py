@@ -17,6 +17,7 @@ from models import fetch_karma_leaderboard, insert_karma, parse_karma_from_text
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET"),
+    token_verification_enabled=False,
 )
 
 
