@@ -52,7 +52,7 @@ def test_find_karma(client_mock, connection_context, text):
     client_mock.chat_postMessage.assert_not_called()
 
 
-def test_find_multiple_karma(client_mock, connection_context, text):
+def test_find_multiple_karma(client_mock, connection_context):
     handle_message_with_karma(
         client_mock,
         connection_context,
