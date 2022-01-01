@@ -1,5 +1,9 @@
 # Botko 🤖
 
+[![Upgrade dependencies](https://github.com/anze3db/botko/actions/workflows/upgrade-dependencies.yml/badge.svg?branch=main&event=schedule)](https://github.com/anze3db/botko/actions/workflows/upgrade-dependencies.yml)
+[![Test & Deploy](https://github.com/anze3db/botko/actions/workflows/test-deploy.yml/badge.svg)](https://github.com/anze3db/botko/actions/workflows/test-deploy.yml)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+
 A spiritual successor to https://github.com/psywerx/botko
 
 
