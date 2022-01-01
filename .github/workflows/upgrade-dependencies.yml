@@ -1,4 +1,4 @@
-# This workflow will install pip-tools, run pip-compile to update all dependencies and then 
+# This workflow will install pip-tools, run pip-compile to update all dependencies and then
 # open a PR unless everything is up to date.
 
 name: Upgrade dependencies
@@ -10,9 +10,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.10
@@ -27,8 +25,6 @@ jobs:
       run: |
         pip-compile --upgrade requirements.in
         pip-compile --upgrade dev-requirements.in
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v3
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v3
       with:
