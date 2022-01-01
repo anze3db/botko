@@ -52,18 +52,12 @@ def test_find_karma(client_mock, connection_context, text):
     client_mock.chat_postMessage.assert_not_called()
 
 
-@pytest.mark.parametrize(
-    "text",
-    [
-        "Hey there <@U02RW93RGBX>\xa0++ <@U02RMSKJDH>\xa0++",
-    ],
-)
 def test_find_multiple_karma(client_mock, connection_context, text):
     handle_message_with_karma(
         client_mock,
         connection_context,
         dict(
-            text=text,
+            text="Hey there <@U02RW93RGBX>\xa0++ <@U02RMSKJDH>\xa0++",
             channel="my_channel",
             ts="123",
             user="U2RMSKJDH",
@@ -86,7 +80,7 @@ def test_find_multiple_karma(client_mock, connection_context, text):
         "++Hey there <@U02RW93RGBX>\xa0 thing++ <@U02RMSKJDH>\xa0 other thing++",
     ],
 )
-def test_find_multiple_karma(client_mock, connection_context, text):
+def test_find_multiple_invalid_karma(client_mock, connection_context, text):
     handle_message_with_karma(
         client_mock,
         connection_context,
