@@ -28,7 +28,7 @@ sniffio==1.2.0
     # via anyio
 starlette==0.17.1
     # via -r requirements.in
-urllib3==1.26.7
+urllib3==1.26.8
     # via sentry-sdk
 uvicorn==0.16.0
     # via -r requirements.in
