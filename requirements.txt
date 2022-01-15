@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements.in
 #
-anyio==3.4.0
+anyio==3.5.0
     # via starlette
 asgiref==3.4.1
     # via uvicorn
@@ -30,5 +30,5 @@ starlette==0.17.1
     # via -r requirements.in
 urllib3==1.26.8
     # via sentry-sdk
-uvicorn==0.16.0
+uvicorn==0.17.0
     # via -r requirements.in
