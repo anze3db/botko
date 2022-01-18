@@ -20,7 +20,7 @@ python-dotenv==0.19.2
     # via -r requirements.in
 sentry-sdk==1.5.2
     # via -r requirements.in
-slack-bolt==1.11.1
+slack_bolt==1.11.2
     # via -r requirements.in
 slack-sdk==3.13.0
     # via slack-bolt
