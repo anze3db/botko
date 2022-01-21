@@ -18,9 +18,9 @@ idna==3.3
     # via anyio
 python-dotenv==0.19.2
     # via -r requirements.in
-sentry-sdk==1.5.2
+sentry-sdk==1.5.3
     # via -r requirements.in
-slack_bolt==1.11.2
+slack-bolt==1.11.2
     # via -r requirements.in
 slack-sdk==3.13.0
     # via slack-bolt
