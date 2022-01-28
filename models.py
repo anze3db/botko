@@ -1,6 +1,6 @@
 import re
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def insert_karma(
@@ -16,6 +16,16 @@ def fetch_karma_leaderboard(connection: sqlite3.Connection) -> sqlite3.Cursor:
     return connection.execute(
         "SELECT COUNT(*) as count, user FROM karma WHERE strftime('%Y', datetime(ts, 'unixepoch')) = ? GROUP BY user ORDER BY count DESC",
         (str(datetime.now().year),),
+    )
+
+
+def fetch_karma_leaderboard_prev_month(
+    connection: sqlite3.Connection,
+) -> sqlite3.Cursor:
+    prev_month = datetime.now().replace(day=1) - timedelta(days=1)
+    return connection.execute(
+        "SELECT COUNT(*) as count, user FROM karma WHERE strftime('%Y-%m', datetime(ts, 'unixepoch')) = ? GROUP BY user ORDER BY count DESC",
+        (prev_month.strftime("%Y-%m"),),
     )
 
 

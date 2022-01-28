@@ -18,6 +18,8 @@ idna==3.3
     # via anyio
 python-dotenv==0.19.2
     # via -r requirements.in
+schedule==1.1.0
+    # via -r requirements.in
 sentry-sdk==1.5.3
     # via -r requirements.in
 slack-bolt==1.11.2

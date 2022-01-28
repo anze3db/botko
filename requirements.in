@@ -3,3 +3,4 @@ python-dotenv
 slack_bolt
 uvicorn
 sentry-sdk
+schedule
