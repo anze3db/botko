@@ -17,7 +17,7 @@ def fixture_client_mock():
 
 @pytest.fixture(name="connection_context")
 def fixture_connection_context():
-    connection = get_connection()
+    connection = get_connection(":memory:")
     connection.execute("BEGIN")
     yield dict(connection=connection)
     connection.execute("ROLLBACK")

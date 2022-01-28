@@ -11,7 +11,7 @@ logger = logging.getLogger("uvicorn.db")
 def get_connection(url: str = None) -> sqlite3.Connection:
     # DB INIT
     if not url:
-        url = ":memory:"
+        url = os.environ.get("DATABASE_URL", ":memory:")
 
     logger.info("📀 Loading data from %s", url)
     connection = sqlite3.connect(
@@ -27,5 +27,5 @@ def get_connection(url: str = None) -> sqlite3.Connection:
 
 
 def connection_context(context, next):
-    context["connection"] = get_connection(os.environ.get("DATABASE_URL", ":memory:"))
+    context["connection"] = get_connection()
     next()
