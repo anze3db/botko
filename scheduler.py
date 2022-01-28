@@ -59,6 +59,10 @@ def job(connection: sqlite3.Connection, client: WebClient):
 
 schedule.every().day.at("10:00").do(lambda: job(get_connection(), app.client))
 if __name__ == "__main__":
+    import logging
+
+    logger = logging.getLogger("uvicorn.scheduler")
+    logger.info("⏰ Starting scheduler")
     while True:
         schedule.run_pending()
         time.sleep(1)
