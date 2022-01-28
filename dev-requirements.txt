@@ -4,6 +4,8 @@
 #
 #    pip-compile dev-requirements.in
 #
+astroid==2.9.3
+    # via pylint
 attrs==21.4.0
     # via pytest
 black==21.12b0
@@ -16,10 +18,18 @@ colorama==0.4.4
     # via pytest-watch
 docopt==0.6.2
     # via pytest-watch
+freezegun==1.1.0
+    # via -r dev-requirements.in
 iniconfig==1.1.1
     # via pytest
 isort==5.10.1
-    # via -r dev-requirements.in
+    # via
+    #   -r dev-requirements.in
+    #   pylint
+lazy-object-proxy==1.7.1
+    # via astroid
+mccabe==0.6.1
+    # via pylint
 mypy==0.931
     # via -r dev-requirements.in
 mypy-extensions==0.4.3
@@ -31,11 +41,15 @@ packaging==21.3
 pathspec==0.9.0
     # via black
 platformdirs==2.4.1
-    # via black
+    # via
+    #   black
+    #   pylint
 pluggy==1.0.0
     # via pytest
 py==1.11.0
     # via pytest
+pylint==2.12.2
+    # via -r dev-requirements.in
 pyparsing==3.0.7
     # via packaging
 pytest==6.2.5
@@ -44,8 +58,14 @@ pytest==6.2.5
     #   pytest-watch
 pytest-watch==4.2.0
     # via -r dev-requirements.in
+python-dateutil==2.8.2
+    # via freezegun
+six==1.16.0
+    # via python-dateutil
 toml==0.10.2
-    # via pytest
+    # via
+    #   pylint
+    #   pytest
 tomli==1.2.3
     # via
     #   black
@@ -56,3 +76,8 @@ typing-extensions==4.0.1
     #   mypy
 watchdog==2.1.6
     # via pytest-watch
+wrapt==1.13.3
+    # via astroid
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools

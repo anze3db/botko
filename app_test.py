@@ -6,21 +6,20 @@ import pytest
 from slack_sdk.web.client import WebClient
 
 from app import handle_message_with_karma, say_hello, update_home_tab
-from db import connection_context as db_connection_context
+from db import get_connection
 from models import insert_karma
 
 
-@pytest.fixture
-def client_mock():
+@pytest.fixture(name="client_mock")
+def fixture_client_mock():
     return create_autospec(WebClient)
 
 
-@pytest.fixture
-def connection_context():
-    db_connection_context(context := {}, lambda: None)
-    connection = context["connection"]
+@pytest.fixture(name="connection_context")
+def fixture_connection_context():
+    connection = get_connection(":memory:")
     connection.execute("BEGIN")
-    yield context
+    yield dict(connection=connection)
     connection.execute("ROLLBACK")
 
 
@@ -65,7 +64,7 @@ def test_find_multiple_karma(client_mock, connection_context):
     )
     connection = connection_context["connection"]
 
-    assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 2, text
+    assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 2
     client_mock.reactions_add.assert_called_with(
         channel="my_channel", name="botko", timestamp="123"
     )
@@ -115,7 +114,7 @@ def test_self_karma(client_mock, connection_context):
     client_mock.reactions_add.assert_not_called()
     client_mock.chat_postMessage.assert_called_with(
         channel="my_channel",
-        text=f"I can't let you do that <@U02RMSKJDH>. You can't give karma to yourself.",
+        text="I can't let you do that <@U02RMSKJDH>. You can't give karma to yourself.",
         thread_ts="123",
     )
 
@@ -139,7 +138,7 @@ def test_self_karma_and_other_karma(client_mock, connection_context):
     )
     client_mock.chat_postMessage.assert_called_with(
         channel="my_channel",
-        text=f"I can't let you do that <@U02RMSKJDH>. You can't give karma to yourself.",
+        text="I can't let you do that <@U02RMSKJDH>. You can't give karma to yourself.",
         thread_ts="123",
     )
 
@@ -164,7 +163,9 @@ def test_update_home_tab(client_mock: Mock, connection_context):
         ts=f"{time.time()}",
         users=["U02RW93RGBX", "U02RW93RGBX", "U6LJ2A03A", "U6LJ2A03A", "U6LJ2A03A"],
     )
-    update_home_tab(client_mock, dict(user="123"), connection_context, Mock())
+    update_home_tab(
+        client=client_mock, event=dict(user="123"), context=connection_context
+    )
     client_mock.views_publish.assert_called()
     view = client_mock.views_publish.call_args.kwargs["view"]
     assert view["type"] == "home"

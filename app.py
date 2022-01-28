@@ -9,10 +9,10 @@ from slack_sdk.web.client import WebClient
 from starlette.applications import Starlette
 from starlette.routing import Route
 
-load_dotenv()  # Needs to be run before we import db
-
 from db import connection_context
 from models import fetch_karma_leaderboard, insert_karma, parse_karma_from_text
+
+load_dotenv()
 
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
@@ -50,7 +50,7 @@ def handle_message_with_karma(client: WebClient, context, message):
 
 
 @app.event("app_home_opened", middleware=[connection_context])
-def update_home_tab(client, event, context, logger):
+def update_home_tab(client, event, context):
 
     users = fetch_karma_leaderboard(context["connection"])
     client.views_publish(
@@ -112,7 +112,7 @@ if sentry_dns := os.environ.get("SENTRY_DNS"):
 
     logger.info("👩‍🚒 Setting up Sentry")
 
-    sentry_sdk.init(
+    sentry_sdk.init(  # pylint: disable=abstract-class-instantiated
         sentry_dns,
         traces_sample_rate=1.0,
     )
