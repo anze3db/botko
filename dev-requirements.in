@@ -2,5 +2,6 @@
 black
 isort
 mypy
+pylint
 pytest
 pytest-watch
