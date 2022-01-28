@@ -6,7 +6,7 @@ import pytest
 from slack_sdk.web.client import WebClient
 
 from app import handle_message_with_karma, say_hello, update_home_tab
-from db import connection_context as db_connection_context
+from db import get_connection
 from models import insert_karma
 
 
@@ -17,10 +17,9 @@ def fixture_client_mock():
 
 @pytest.fixture(name="connection_context")
 def fixture_connection_context():
-    db_connection_context(context := {}, lambda: None)
-    connection = context["connection"]
+    connection = get_connection()
     connection.execute("BEGIN")
-    yield context
+    yield dict(connection=connection)
     connection.execute("ROLLBACK")
 
 
