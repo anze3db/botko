@@ -10,13 +10,13 @@ from db import connection_context as db_connection_context
 from models import insert_karma
 
 
-@pytest.fixture
-def client_mock():
+@pytest.fixture(name="client_mock")
+def fixture_client_mock():
     return create_autospec(WebClient)
 
 
-@pytest.fixture
-def connection_context():
+@pytest.fixture(name="connection_context")
+def fixture_connection_context():
     db_connection_context(context := {}, lambda: None)
     connection = context["connection"]
     connection.execute("BEGIN")
