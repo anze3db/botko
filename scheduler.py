@@ -14,9 +14,9 @@ def job(connection: sqlite3.Connection, client: WebClient):
     now = datetime.now()
     prev_month = now.replace(day=1) - timedelta(days=1)
 
-    # if now.day != 1:
-    #     # Only report on the first of the month
-    #     return
+    if now.day != 1:
+        # Only report on the first of the month
+        return
 
     users = fetch_karma_leaderboard_prev_month(connection)
 
@@ -42,7 +42,7 @@ def job(connection: sqlite3.Connection, client: WebClient):
         ]
 
     client.chat_postMessage(
-        channel="C02SBSSCMR7",
+        channel="C6LKA38DA",
         text=f"Karma stats for {prev_month.strftime('%B %Y')}",
         blocks=[
             {
