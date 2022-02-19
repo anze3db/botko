@@ -10,7 +10,7 @@ attrs==21.4.0
     # via pytest
 black==22.1.0
     # via -r dev-requirements.in
-click==8.0.3
+click==8.0.4
     # via
     #   -c requirements.txt
     #   black
@@ -69,7 +69,7 @@ tomli==2.0.1
     #   black
     #   mypy
     #   pytest
-typing-extensions==4.0.1
+typing-extensions==4.1.1
     # via mypy
 watchdog==2.1.6
     # via pytest-watch
