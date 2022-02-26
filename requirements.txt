@@ -20,9 +20,9 @@ python-dotenv==0.19.2
     # via -r requirements.in
 schedule==1.1.0
     # via -r requirements.in
-sentry-sdk==1.5.5
+sentry-sdk==1.5.6
     # via -r requirements.in
-slack-bolt==1.11.4
+slack-bolt==1.11.5
     # via -r requirements.in
 slack-sdk==3.15.1
     # via slack-bolt
