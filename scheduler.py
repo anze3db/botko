@@ -14,7 +14,7 @@ def job(connection: sqlite3.Cursor, client: WebClient):
     now = datetime.now()
     prev_month = now.replace(day=1) - timedelta(days=1)
 
-    if now.day != 1:
+    if now.day != 2:
         # Only report on the first of the month
         return
 
