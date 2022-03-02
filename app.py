@@ -18,6 +18,7 @@ app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET"),
     token_verification_enabled=False,
+    process_before_response=True,
 )
 
 
