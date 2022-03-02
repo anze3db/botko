@@ -1,31 +1,32 @@
-import atexit
 import logging
 import os
 import sqlite3
-from functools import cache
+from contextlib import contextmanager
 
 logger = logging.getLogger("uvicorn.db")
 
 
-@cache
-def get_connection(url: str = None) -> sqlite3.Connection:
-    # DB INIT
-    if not url:
+@contextmanager
+def get_connection(url=None):
+    if url is None:
         url = os.environ.get("DATABASE_URL", ":memory:")
+    logger.info("📀 Connecting to %s", url)
+    connection = sqlite3.connect(url)
+    connection.row_factory = sqlite3.Row
+    cursor = connection.cursor()
+    yield cursor
+    connection.commit()
+    connection.close()
+    logger.info("📀 Closed connection to %s", url)
 
-    logger.info("📀 Loading data from %s", url)
-    connection = sqlite3.connect(
-        url,
-        check_same_thread=False,  # TODO: We might have to open it on every connection
-    )
-    connection.execute(
+
+def init_db(cursor):
+    cursor.execute(
         "create table if not exists karma (id integer primary key, channel text not null, ts text not null, user text not null)"
     )
-    connection.row_factory = sqlite3.Row
-    atexit.register(connection.close)
-    return connection
 
 
 def connection_context(context, next):
-    context["connection"] = get_connection()
-    next()
+    with get_connection() as connection:
+        context["connection"] = connection
+        next()
