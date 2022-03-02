@@ -14,8 +14,9 @@ from models import insert_karma
 
 @pytest.fixture(name="connection")
 def fixture_connection():
-    with get_connection(":memory:") as connection:
+    with get_connection() as connection:
         init_db(connection)
+        connection.execute("delete from karma")
         yield connection
 
 

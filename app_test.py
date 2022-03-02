@@ -15,11 +15,11 @@ def fixture_client_mock():
     return create_autospec(WebClient)
 
 
-@pytest.fixture(name="connection_context")
-def fixture_connection_context():
-    with get_connection(":memory:") as connection:
+@pytest.fixture(autouse=True)
+def fixture_db_reset():
+    with get_connection() as connection:
         init_db(connection)
-        yield dict(connection=connection)
+        connection.execute("delete from karma")
 
 
 @pytest.mark.parametrize(
@@ -30,10 +30,9 @@ def fixture_connection_context():
         "Amazing, <@U02RW93RGBX>++",
     ],
 )
-def test_find_karma(client_mock, connection_context, text):
+def test_find_karma(client_mock, text):
     handle_message_with_karma(
         client_mock,
-        connection_context,
         dict(
             text=text,
             channel="my_channel",
@@ -41,19 +40,18 @@ def test_find_karma(client_mock, connection_context, text):
             user="U2RMSKJDH",
         ),
     )
-    connection = connection_context["connection"]
 
-    assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 1, text
+    with get_connection() as connection:
+        assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 1, text
     client_mock.reactions_add.assert_called_with(
         channel="my_channel", name="botko", timestamp="123"
     )
     client_mock.chat_postMessage.assert_not_called()
 
 
-def test_find_multiple_karma(client_mock, connection_context):
+def test_find_multiple_karma(client_mock):
     handle_message_with_karma(
         client_mock,
-        connection_context,
         dict(
             text="Hey there <@U02RW93RGBX>\xa0++ <@U02RMSKJDH>\xa0++",
             channel="my_channel",
@@ -61,9 +59,9 @@ def test_find_multiple_karma(client_mock, connection_context):
             user="U2RMSKJDH",
         ),
     )
-    connection = connection_context["connection"]
 
-    assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 2
+    with get_connection() as connection:
+        assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 2
     client_mock.reactions_add.assert_called_with(
         channel="my_channel", name="botko", timestamp="123"
     )
@@ -78,10 +76,9 @@ def test_find_multiple_karma(client_mock, connection_context):
         "++Hey there <@U02RW93RGBX>\xa0 thing++ <@U02RMSKJDH>\xa0 other thing++",
     ],
 )
-def test_find_multiple_invalid_karma(client_mock, connection_context, text):
+def test_find_multiple_invalid_karma(client_mock, text):
     handle_message_with_karma(
         client_mock,
-        connection_context,
         dict(
             text=text,
             channel="my_channel",
@@ -89,17 +86,16 @@ def test_find_multiple_invalid_karma(client_mock, connection_context, text):
             user="U2RMSKJDH",
         ),
     )
-    connection = connection_context["connection"]
 
-    assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 0, text
+    with get_connection() as connection:
+        assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 0, text
     client_mock.reactions_add.assert_not_called()
     client_mock.chat_postMessage.assert_not_called()
 
 
-def test_self_karma(client_mock, connection_context):
+def test_self_karma(client_mock):
     handle_message_with_karma(
         client_mock,
-        connection_context,
         dict(
             text="I am giving <@U02RMSKJDH>++",
             channel="my_channel",
@@ -107,9 +103,9 @@ def test_self_karma(client_mock, connection_context):
             user="U02RMSKJDH",
         ),
     )
-    connection = connection_context["connection"]
 
-    assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 0
+    with get_connection() as connection:
+        assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 0
     client_mock.reactions_add.assert_not_called()
     client_mock.chat_postMessage.assert_called_with(
         channel="my_channel",
@@ -118,10 +114,9 @@ def test_self_karma(client_mock, connection_context):
     )
 
 
-def test_self_karma_and_other_karma(client_mock, connection_context):
+def test_self_karma_and_other_karma(client_mock):
     handle_message_with_karma(
         client_mock,
-        connection_context,
         dict(
             text="I am giving <@U02RMSKJDH>++ <@UOTHRUSR>++ ",
             channel="my_channel",
@@ -129,9 +124,9 @@ def test_self_karma_and_other_karma(client_mock, connection_context):
             user="U02RMSKJDH",
         ),
     )
-    connection = connection_context["connection"]
 
-    assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 1
+    with get_connection() as connection:
+        assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 1
     client_mock.reactions_add.assert_called_with(
         channel="my_channel", name="botko", timestamp="123"
     )
@@ -148,23 +143,21 @@ def test_say_hello():
     say_mock.assert_called_with("Hi there, <@123>!")
 
 
-def test_update_home_tab(client_mock: Mock, connection_context):
-    connection = connection_context["connection"]
-    insert_karma(
-        connection,
-        channel="C02SBSSCMR7",
-        ts=f"{time.time()-60*60*60*24*700}",
-        users=["U123123"],
-    )
-    insert_karma(
-        connection,
-        channel="C02SBSSCMR7",
-        ts=f"{time.time()}",
-        users=["U02RW93RGBX", "U02RW93RGBX", "U6LJ2A03A", "U6LJ2A03A", "U6LJ2A03A"],
-    )
-    update_home_tab(
-        client=client_mock, event=dict(user="123"), context=connection_context
-    )
+def test_update_home_tab(client_mock: Mock):
+    with get_connection() as connection:
+        insert_karma(
+            connection,
+            channel="C02SBSSCMR7",
+            ts=f"{time.time()-60*60*60*24*700}",
+            users=["U123123"],
+        )
+        insert_karma(
+            connection,
+            channel="C02SBSSCMR7",
+            ts=f"{time.time()}",
+            users=["U02RW93RGBX", "U02RW93RGBX", "U6LJ2A03A", "U6LJ2A03A", "U6LJ2A03A"],
+        )
+    update_home_tab(client=client_mock, event=dict(user="123"))
     client_mock.views_publish.assert_called()
     view = client_mock.views_publish.call_args.kwargs["view"]
     assert view["type"] == "home"
