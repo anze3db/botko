@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 
 def insert_karma(
-    connection: sqlite3.Connection, channel: str, ts: str, users: list[str]
+    connection: sqlite3.Cursor, channel: str, ts: str, users: list[str]
 ) -> None:
     values = [(channel, ts, user) for user in users]
     connection.executemany(
@@ -12,7 +12,7 @@ def insert_karma(
     )
 
 
-def fetch_karma_leaderboard(connection: sqlite3.Connection) -> sqlite3.Cursor:
+def fetch_karma_leaderboard(connection: sqlite3.Cursor) -> sqlite3.Cursor:
     return connection.execute(
         "SELECT COUNT(*) as count, user FROM karma WHERE strftime('%Y', datetime(ts, 'unixepoch')) = ? GROUP BY user ORDER BY count DESC",
         (str(datetime.now().year),),
@@ -20,7 +20,7 @@ def fetch_karma_leaderboard(connection: sqlite3.Connection) -> sqlite3.Cursor:
 
 
 def fetch_karma_leaderboard_prev_month(
-    connection: sqlite3.Connection,
+    connection: sqlite3.Cursor,
 ) -> sqlite3.Cursor:
     prev_month = datetime.now().replace(day=1) - timedelta(days=1)
     return connection.execute(

@@ -10,7 +10,7 @@ from db import get_connection
 from models import fetch_karma_leaderboard_prev_month
 
 
-def job(connection: sqlite3.Connection, client: WebClient):
+def job(connection: sqlite3.Cursor, client: WebClient):
     now = datetime.now()
     prev_month = now.replace(day=1) - timedelta(days=1)
 
@@ -57,7 +57,12 @@ def job(connection: sqlite3.Connection, client: WebClient):
     )
 
 
-schedule.every().day.at("10:00").do(lambda: job(get_connection(), app.client))
+def job_wrapper():
+    with get_connection() as connection:
+        job(connection, app.client)
+
+
+schedule.every().day.at("10:00").do(job_wrapper)
 if __name__ == "__main__":
     import logging
 

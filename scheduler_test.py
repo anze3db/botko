@@ -8,16 +8,15 @@ import pytest
 from slack_sdk.web.client import WebClient
 
 import scheduler
-from db import get_connection
+from db import get_connection, init_db
 from models import insert_karma
 
 
 @pytest.fixture(name="connection")
 def fixture_connection():
-    connection = get_connection(":memory:")
-    connection.execute("BEGIN")
-    yield connection
-    connection.execute("ROLLBACK")
+    with get_connection(":memory:") as connection:
+        init_db(connection)
+        yield connection
 
 
 def test_schedule():
@@ -27,7 +26,7 @@ def test_schedule():
 
 
 @freezegun.freeze_time("2022-01-01 10:00:00")
-def test_job_no_karma(connection: sqlite3.Connection):
+def test_job_no_karma(connection: sqlite3.Cursor):
     scheduler.job(connection, client_mock := Mock(spec=WebClient()))
     client_mock.chat_postMessage.assert_called()
     assert (
@@ -37,13 +36,13 @@ def test_job_no_karma(connection: sqlite3.Connection):
 
 
 @freezegun.freeze_time("2022-01-02 10:00:00")
-def test_job_only_on_first(connection: sqlite3.Connection):
+def test_job_only_on_first(connection: sqlite3.Cursor):
     scheduler.job(connection, client_mock := Mock(spec=WebClient()))
     client_mock.chat_postMessage.assert_not_called()
 
 
 @freezegun.freeze_time("2022-01-01 10:00:00")
-def test_job_karma(connection: sqlite3.Connection):
+def test_job_karma(connection: sqlite3.Cursor):
     insert_karma(
         connection,
         channel="C02SBSSCMR7",
