@@ -16,7 +16,7 @@ h11==0.13.0
     # via uvicorn
 idna==3.3
     # via anyio
-python-dotenv==0.19.2
+python-dotenv==0.20.0
     # via -r requirements.in
 schedule==1.1.0
     # via -r requirements.in
