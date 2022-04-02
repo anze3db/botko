@@ -4,13 +4,13 @@
 #
 #    pip-compile dev-requirements.in
 #
-astroid==2.11.1
+astroid==2.11.2
     # via pylint
 attrs==21.4.0
     # via pytest
-black==22.1.0
+black==22.3.0
     # via -r dev-requirements.in
-click==8.0.4
+click==8.1.2
     # via
     #   -c requirements.txt
     #   black
@@ -50,7 +50,7 @@ pluggy==1.0.0
     # via pytest
 py==1.11.0
     # via pytest
-pylint==2.13.0
+pylint==2.13.4
     # via -r dev-requirements.in
 pyparsing==3.0.7
     # via packaging
