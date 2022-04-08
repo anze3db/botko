@@ -26,7 +26,7 @@ def test_schedule():
     ] == [(datetime.time(10, 0), 1, datetime.timedelta(days=1))]
 
 
-@freezegun.freeze_time("2022-01-02 10:00:00")
+@freezegun.freeze_time("2022-01-01 10:00:00")
 def test_job_no_karma(connection: sqlite3.Cursor):
     scheduler.job(connection, client_mock := Mock(spec=WebClient()))
     client_mock.chat_postMessage.assert_called()
@@ -36,13 +36,13 @@ def test_job_no_karma(connection: sqlite3.Cursor):
     )
 
 
-@freezegun.freeze_time("2022-01-01 10:00:00")
+@freezegun.freeze_time("2022-01-02 10:00:00")
 def test_job_only_on_first(connection: sqlite3.Cursor):
     scheduler.job(connection, client_mock := Mock(spec=WebClient()))
     client_mock.chat_postMessage.assert_not_called()
 
 
-@freezegun.freeze_time("2022-01-02 10:00:00")
+@freezegun.freeze_time("2022-01-01 10:00:00")
 def test_job_karma(connection: sqlite3.Cursor):
     insert_karma(
         connection,
