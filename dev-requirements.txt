@@ -16,7 +16,7 @@ click==8.1.3
     #   black
 colorama==0.4.4
     # via pytest-watch
-dill==0.3.4
+dill==0.3.5.1
     # via pylint
 docopt==0.6.2
     # via pytest-watch
@@ -72,7 +72,7 @@ tomli==2.0.1
     #   pytest
 typing-extensions==4.2.0
     # via mypy
-watchdog==2.1.7
+watchdog==2.1.8
     # via pytest-watch
 wrapt==1.14.1
     # via astroid
