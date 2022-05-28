@@ -24,7 +24,7 @@ sentry-sdk==1.5.12
     # via -r requirements.in
 slack-bolt==1.14.0
     # via -r requirements.in
-slack-sdk==3.16.2
+slack-sdk==3.17.0
     # via slack-bolt
 sniffio==1.2.0
     # via anyio
