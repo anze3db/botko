@@ -28,7 +28,7 @@ slack-sdk==3.17.0
     # via slack-bolt
 sniffio==1.2.0
     # via anyio
-starlette==0.20.0
+starlette==0.20.1
     # via -r requirements.in
 urllib3==1.26.9
     # via sentry-sdk
