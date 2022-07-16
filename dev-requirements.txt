@@ -4,7 +4,7 @@
 #
 #    pip-compile dev-requirements.in
 #
-astroid==2.11.6
+astroid==2.11.7
     # via pylint
 attrs==21.4.0
     # via pytest
