@@ -32,7 +32,7 @@ lazy-object-proxy==1.7.1
     # via astroid
 mccabe==0.7.0
     # via pylint
-mypy==0.961
+mypy==0.971
     # via -r dev-requirements.in
 mypy-extensions==0.4.3
     # via
@@ -50,7 +50,7 @@ pluggy==1.0.0
     # via pytest
 py==1.11.0
     # via pytest
-pylint==2.14.4
+pylint==2.14.5
     # via -r dev-requirements.in
 pyparsing==3.0.9
     # via packaging
