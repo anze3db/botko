@@ -18,11 +18,11 @@ python-dotenv==0.20.0
     # via -r requirements.in
 schedule==1.1.0
     # via -r requirements.in
-sentry-sdk==1.7.2
+sentry-sdk==1.8.0
     # via -r requirements.in
-slack-bolt==1.14.1
+slack-bolt==1.14.2
     # via -r requirements.in
-slack-sdk==3.17.2
+slack-sdk==3.18.0
     # via slack-bolt
 sniffio==1.2.0
     # via anyio
