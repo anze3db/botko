@@ -6,7 +6,7 @@
 #
 astroid==2.11.7
     # via pylint
-attrs==21.4.0
+attrs==22.1.0
     # via pytest
 black==22.6.0
     # via -r dev-requirements.in
