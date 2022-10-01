@@ -32,7 +32,7 @@ lazy-object-proxy==1.7.1
     # via astroid
 mccabe==0.7.0
     # via pylint
-mypy==0.971
+mypy==0.981
     # via -r dev-requirements.in
 mypy-extensions==0.4.3
     # via
@@ -70,7 +70,7 @@ tomli==2.0.1
     #   mypy
     #   pylint
     #   pytest
-tomlkit==0.11.4
+tomlkit==0.11.5
     # via pylint
 typing-extensions==4.3.0
     # via mypy
