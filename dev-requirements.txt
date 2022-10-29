@@ -14,12 +14,14 @@ click==8.1.3
     # via
     #   -c requirements.txt
     #   black
-colorama==0.4.5
+colorama==0.4.6
     # via pytest-watch
-dill==0.3.5.1
+dill==0.3.6
     # via pylint
 docopt==0.6.2
     # via pytest-watch
+exceptiongroup==1.0.0
+    # via pytest
 freezegun==1.2.2
     # via -r dev-requirements.in
 iniconfig==1.1.1
@@ -28,7 +30,7 @@ isort==5.10.1
     # via
     #   -r dev-requirements.in
     #   pylint
-lazy-object-proxy==1.7.1
+lazy-object-proxy==1.8.0
     # via astroid
 mccabe==0.7.0
     # via pylint
@@ -48,13 +50,11 @@ platformdirs==2.5.2
     #   pylint
 pluggy==1.0.0
     # via pytest
-py==1.11.0
-    # via pytest
 pylint==2.15.5
     # via -r dev-requirements.in
 pyparsing==3.0.9
     # via packaging
-pytest==7.1.3
+pytest==7.2.0
     # via
     #   -r dev-requirements.in
     #   pytest-watch
@@ -70,7 +70,7 @@ tomli==2.0.1
     #   mypy
     #   pylint
     #   pytest
-tomlkit==0.11.5
+tomlkit==0.11.6
     # via pylint
 typing-extensions==4.4.0
     # via mypy
