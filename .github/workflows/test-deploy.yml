@@ -40,4 +40,4 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script: |
-          bash update_botko.sh
+          bash projects/botko/botko_update.sh
