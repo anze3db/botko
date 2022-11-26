@@ -4,7 +4,7 @@
 #
 #    pip-compile dev-requirements.in
 #
-astroid==2.12.12
+astroid==2.12.13
     # via pylint
 attrs==22.1.0
     # via pytest
@@ -50,7 +50,7 @@ platformdirs==2.5.4
     #   pylint
 pluggy==1.0.0
     # via pytest
-pylint==2.15.5
+pylint==2.15.6
     # via -r dev-requirements.in
 pyparsing==3.0.9
     # via packaging
