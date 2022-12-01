@@ -50,7 +50,7 @@ platformdirs==2.5.4
     #   pylint
 pluggy==1.0.0
     # via pytest
-pylint==2.15.6
+pylint==2.15.7
     # via -r dev-requirements.in
 pyparsing==3.0.9
     # via packaging
