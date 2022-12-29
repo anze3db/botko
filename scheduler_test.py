@@ -31,7 +31,37 @@ def test_job_no_karma(connection: sqlite3.Cursor):
     scheduler.job(connection, client_mock := Mock(spec=WebClient()))
     client_mock.chat_postMessage.assert_called()
     assert (
-        client_mock.chat_postMessage.call_args[1]["blocks"][1]["text"]["text"]
+        client_mock.chat_postMessage.call_args_list[0][1]["blocks"][0]["text"]["text"]
+        == ":tada:  Happy New Year!  :tada:"
+    )
+    assert (
+        client_mock.chat_postMessage.call_args_list[0][1]["blocks"][2]["text"]["text"]
+        == "Karma stats for 2021"
+    )
+    assert (
+        client_mock.chat_postMessage.call_args_list[0][1]["blocks"][3]["text"]["text"]
+        == "Nobody received any Karma in the last year :cry: :cry: :cry:"
+    )
+    assert (
+        client_mock.chat_postMessage.call_args_list[1][1]["blocks"][0]["text"]["text"]
+        == "Karma stats for December 2021"
+    )
+    assert (
+        client_mock.chat_postMessage.call_args_list[1][1]["blocks"][1]["text"]["text"]
+        == "Nobody received any Karma last month :cry:"
+    )
+
+
+@freezegun.freeze_time("2022-02-01 10:00:00")
+def test_job_no_karma_not_in_jan(connection: sqlite3.Cursor):
+    scheduler.job(connection, client_mock := Mock(spec=WebClient()))
+    client_mock.chat_postMessage.assert_called()
+    assert (
+        client_mock.chat_postMessage.call_args_list[0][1]["blocks"][0]["text"]["text"]
+        == "Karma stats for January 2022"
+    )
+    assert (
+        client_mock.chat_postMessage.call_args_list[0][1]["blocks"][1]["text"]["text"]
         == "Nobody received any Karma last month :cry:"
     )
 
@@ -67,11 +97,20 @@ def test_job_karma(connection: sqlite3.Cursor):
 
     scheduler.job(connection, client_mock := Mock(spec=WebClient()))
     client_mock.chat_postMessage.assert_called()
+
     assert (
-        client_mock.chat_postMessage.call_args[1]["blocks"][1]["text"]["text"]
+        client_mock.chat_postMessage.call_args_list[0][1]["blocks"][3]["text"]["text"]
+        == "<@U123124> gained 2 karma."
+    )
+    assert (
+        client_mock.chat_postMessage.call_args_list[0][1]["blocks"][4]["text"]["text"]
+        == "<@U123123> gained 2 karma."
+    )
+    assert (
+        client_mock.chat_postMessage.call_args_list[1][1]["blocks"][1]["text"]["text"]
         == "<@U123124> gained 1 karma."
     )
     assert (
-        client_mock.chat_postMessage.call_args[1]["blocks"][2]["text"]["text"]
+        client_mock.chat_postMessage.call_args_list[1][1]["blocks"][2]["text"]["text"]
         == "<@U123123> gained 1 karma."
     )
