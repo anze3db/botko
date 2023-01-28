@@ -7,6 +7,7 @@ from slack_bolt import App
 from slack_bolt.adapter.starlette import SlackRequestHandler
 from slack_sdk.web.client import WebClient
 from starlette.applications import Starlette
+from starlette.responses import PlainTextResponse
 from starlette.routing import Route
 
 from db import get_connection
@@ -98,9 +99,16 @@ async def endpoint(req):
     return await app_handler.handle(req)
 
 
+def heartbeat(_):
+    return PlainTextResponse("Hello 👋")
+
+
 api = Starlette(
     debug=os.environ.get("DEBUG", "") == "True",
-    routes=[Route("/slack/events", endpoint=endpoint, methods=["POST"])],
+    routes=[
+        Route("/slack/events", endpoint=endpoint, methods=["POST"]),
+        Route("/", endpoint=heartbeat, methods=["GET"]),
+    ],
 )
 
 if sentry_dns := os.environ.get("SENTRY_DNS"):
