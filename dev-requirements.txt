@@ -34,9 +34,9 @@ lazy-object-proxy==1.9.0
     # via astroid
 mccabe==0.7.0
     # via pylint
-mypy==0.991
+mypy==1.0.0
     # via -r dev-requirements.in
-mypy-extensions==0.4.3
+mypy-extensions==1.0.0
     # via
     #   black
     #   mypy
@@ -46,7 +46,7 @@ packaging==23.0
     #   pytest
 pathspec==0.11.0
     # via black
-platformdirs==2.6.2
+platformdirs==3.0.0
     # via
     #   black
     #   pylint
