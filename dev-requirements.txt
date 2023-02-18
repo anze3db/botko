@@ -4,7 +4,7 @@
 #
 #    pip-compile dev-requirements.in
 #
-astroid==2.14.1
+astroid==2.14.2
     # via pylint
 attrs==22.2.0
     # via pytest
@@ -34,7 +34,7 @@ lazy-object-proxy==1.9.0
     # via astroid
 mccabe==0.7.0
     # via pylint
-mypy==1.0.0
+mypy==1.0.1
     # via -r dev-requirements.in
 mypy-extensions==1.0.0
     # via
@@ -52,7 +52,7 @@ platformdirs==3.0.0
     #   pylint
 pluggy==1.0.0
     # via pytest
-pylint==2.16.1
+pylint==2.16.2
     # via -r dev-requirements.in
 pytest==7.2.1
     # via
@@ -72,7 +72,7 @@ tomli==2.0.1
     #   pytest
 tomlkit==0.11.6
     # via pylint
-typing-extensions==4.4.0
+typing-extensions==4.5.0
     # via
     #   astroid
     #   mypy
