@@ -2,6 +2,7 @@ import os
 import sqlite3
 import time
 from datetime import datetime, timedelta
+from urllib import request
 
 import schedule
 from slack_sdk.web.client import WebClient
@@ -117,7 +118,8 @@ def job(connection: sqlite3.Cursor, client: WebClient):
     now = datetime.now()
     
     # Heartbeat
-    request.urlopen(os.environ.get("HEARTBEAT_URL"))
+    if heartbeat_url := os.environ.get("HEARTBEAT_URL"):
+        request.urlopen(heartbeat_url)
 
     if now.day == 1 and now.month == 1:
         report_yearly_karma(connection, client)
