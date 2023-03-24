@@ -1,3 +1,4 @@
+import os
 import sqlite3
 import time
 from datetime import datetime, timedelta
@@ -114,6 +115,9 @@ def report_monthly_karma(connection: sqlite3.Cursor, client: WebClient):
 
 def job(connection: sqlite3.Cursor, client: WebClient):
     now = datetime.now()
+    
+    # Heartbeat
+    request.urlopen(os.environ.get("HEARTBEAT_URL"))
 
     if now.day == 1 and now.month == 1:
         report_yearly_karma(connection, client)
