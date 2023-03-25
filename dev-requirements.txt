@@ -52,7 +52,7 @@ platformdirs==3.1.1
     #   pylint
 pluggy==1.0.0
     # via pytest
-pylint==2.17.0
+pylint==2.17.1
     # via -r dev-requirements.in
 pytest==7.2.2
     # via
@@ -76,7 +76,7 @@ typing-extensions==4.5.0
     # via
     #   astroid
     #   mypy
-watchdog==2.3.1
+watchdog==3.0.0
     # via pytest-watch
 wrapt==1.15.0
     # via astroid

@@ -116,7 +116,7 @@ def report_monthly_karma(connection: sqlite3.Cursor, client: WebClient):
 
 def job(connection: sqlite3.Cursor, client: WebClient):
     now = datetime.now()
-    
+
     # Heartbeat
     if heartbeat_url := os.environ.get("HEARTBEAT_URL"):
         request.urlopen(heartbeat_url)
