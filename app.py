@@ -123,6 +123,6 @@ if sentry_dns := os.environ.get("SENTRY_DNS"):
 
     sentry_sdk.init(  # pylint: disable=abstract-class-instantiated
         sentry_dns,
-        traces_sample_rate=1.0,
+        traces_sample_rate=0.1,
     )
     api = SentryAsgiMiddleware(api)
