@@ -4,3 +4,4 @@ slack_bolt
 uvicorn
 sentry-sdk
 schedule
+urllib3

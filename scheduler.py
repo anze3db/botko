@@ -2,10 +2,10 @@ import os
 import sqlite3
 import time
 from datetime import datetime, timedelta
-from urllib import request
 
 import schedule
 from slack_sdk.web.client import WebClient
+from urllib3 import PoolManager, Retry
 
 from app import app
 from db import get_connection
@@ -124,7 +124,9 @@ def job(connection: sqlite3.Cursor, client: WebClient):
 
     # Heartbeat
     if heartbeat_url := os.environ.get("HEARTBEAT_URL"):
-        request.urlopen(heartbeat_url)
+        retries = Retry(total=8, backoff_factor=0.1)
+        http = PoolManager(retries=retries)
+        http.request("GET", heartbeat_url)
 
 
 def job_wrapper():
