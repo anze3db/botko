@@ -117,14 +117,14 @@ def report_monthly_karma(connection: sqlite3.Cursor, client: WebClient):
 def job(connection: sqlite3.Cursor, client: WebClient):
     now = datetime.now()
 
-    # Heartbeat
-    if heartbeat_url := os.environ.get("HEARTBEAT_URL"):
-        request.urlopen(heartbeat_url)
-
     if now.day == 1 and now.month == 1:
         report_yearly_karma(connection, client)
     if now.day == 1:
         report_monthly_karma(connection, client)
+
+    # Heartbeat
+    if heartbeat_url := os.environ.get("HEARTBEAT_URL"):
+        request.urlopen(heartbeat_url)
 
 
 def job_wrapper():
