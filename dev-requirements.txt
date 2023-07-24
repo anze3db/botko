@@ -8,13 +8,13 @@ astroid==2.15.6
     # via pylint
 black==23.7.0
     # via -r dev-requirements.in
-click==8.1.5
+click==8.1.6
     # via
     #   -c requirements.txt
     #   black
 colorama==0.4.6
     # via pytest-watch
-dill==0.3.6
+dill==0.3.7
     # via pylint
 docopt==0.6.2
     # via pytest-watch
@@ -74,6 +74,7 @@ tomlkit==0.11.8
     # via pylint
 typing-extensions==4.7.1
     # via
+    #   -c requirements.txt
     #   astroid
     #   mypy
 watchdog==3.0.0
