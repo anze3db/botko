@@ -44,15 +44,15 @@ packaging==23.1
     # via
     #   black
     #   pytest
-pathspec==0.11.1
+pathspec==0.11.2
     # via black
-platformdirs==3.9.1
+platformdirs==3.10.0
     # via
     #   black
     #   pylint
 pluggy==1.2.0
     # via pytest
-pylint==2.17.4
+pylint==2.17.5
     # via -r dev-requirements.in
 pytest==7.4.0
     # via
@@ -70,7 +70,7 @@ tomli==2.0.1
     #   mypy
     #   pylint
     #   pytest
-tomlkit==0.11.8
+tomlkit==0.12.1
     # via pylint
 typing-extensions==4.7.1
     # via
