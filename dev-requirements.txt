@@ -8,7 +8,7 @@ astroid==2.15.6
     # via pylint
 black==23.7.0
     # via -r dev-requirements.in
-click==8.1.6
+click==8.1.7
     # via
     #   -c requirements.txt
     #   black
@@ -18,7 +18,7 @@ dill==0.3.7
     # via pylint
 docopt==0.6.2
     # via pytest-watch
-exceptiongroup==1.1.2
+exceptiongroup==1.1.3
     # via
     #   -c requirements.txt
     #   pytest
@@ -34,7 +34,7 @@ lazy-object-proxy==1.9.0
     # via astroid
 mccabe==0.7.0
     # via pylint
-mypy==1.5.0
+mypy==1.5.1
     # via -r dev-requirements.in
 mypy-extensions==1.0.0
     # via
