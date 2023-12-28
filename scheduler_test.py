@@ -116,7 +116,7 @@ def test_job_karma(connection: sqlite3.Cursor):
     )
 
 
-@freezegun.freeze_time("2023-07-08 10:00:00")
+@freezegun.freeze_time("2023-08-07 10:00:00")
 def test_birthdays(connection: sqlite3.Cursor):
     insert_birthday(connection, "U123123", 7, 8)
     scheduler.job(connection, client_mock := Mock(spec=WebClient()))
