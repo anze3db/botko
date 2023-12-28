@@ -39,6 +39,22 @@ def fetch_karma_leaderboard_prev_year(
     )
 
 
+def insert_birthday(
+    connection: sqlite3.Cursor, user: str, day: int, month: int
+) -> None:
+    connection.execute(
+        "INSERT INTO birthday (user, day, month) values (?, ?, ?)",
+        (user, day, month),
+    )
+
+
+def fetch_birthdays(connection: sqlite3.Cursor, day: int, month: int) -> sqlite3.Cursor:
+    return connection.execute(
+        "SELECT user FROM birthday WHERE day = ? AND month = ?",
+        (day, month),
+    )
+
+
 def parse_karma_from_text(text: str) -> list[str]:
     users = [match for match in re.findall(r"<@(U[A-Z0-9]*)>.?\+\+", text)]
     return users

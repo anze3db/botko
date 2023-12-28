@@ -24,3 +24,6 @@ def init_db(cursor):
     cursor.execute(
         "create table if not exists karma (id integer primary key, channel text not null, ts text not null, user text not null)"
     )
+    cursor.execute(
+        "create table if not exists birthday (id integer primary key, user text not null, day integer not null, month integer not null)"
+    )

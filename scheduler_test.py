@@ -9,7 +9,7 @@ from slack_sdk.web.client import WebClient
 
 import scheduler
 from db import get_connection, init_db
-from models import insert_karma
+from models import insert_birthday, insert_karma
 
 
 @pytest.fixture(name="connection")
@@ -114,3 +114,11 @@ def test_job_karma(connection: sqlite3.Cursor):
         client_mock.chat_postMessage.call_args_list[1][1]["blocks"][2]["text"]["text"]
         == "<@U123123> gained 1 karma."
     )
+
+
+@freezegun.freeze_time("2023-07-08 10:00:00")
+def test_birthdays(connection: sqlite3.Cursor):
+    scheduler.job(connection, client_mock := Mock(spec=WebClient()))
+    insert_birthday(connection, "U123123", 7, 8)
+    client_mock.chat_postMessage.assert_called()
+    assert "<@U123123>" in client_mock.chat_postMessage.call_args_list[0][1]["text"]
