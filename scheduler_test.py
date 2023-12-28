@@ -118,7 +118,7 @@ def test_job_karma(connection: sqlite3.Cursor):
 
 @freezegun.freeze_time("2023-07-08 10:00:00")
 def test_birthdays(connection: sqlite3.Cursor):
-    scheduler.job(connection, client_mock := Mock(spec=WebClient()))
     insert_birthday(connection, "U123123", 7, 8)
+    scheduler.job(connection, client_mock := Mock(spec=WebClient()))
     client_mock.chat_postMessage.assert_called()
     assert "<@U123123>" in client_mock.chat_postMessage.call_args_list[0][1]["text"]
