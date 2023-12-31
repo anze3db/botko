@@ -159,7 +159,7 @@ def report_birthdays(connection: sqlite3.Cursor, client: WebClient, username: st
         f"🎂 Wishing you the happiest birthday ever, <@{username}>! 🎁\n\n May your day be filled with laughter, love, and a secret desire to engage in a battle of wits with your friendly neighborhood chatbot. 😂 Just kidding! Enjoy your celebration to the fullest!",
     ]
     client.chat_postMessage(
-        channel="C02SBSSCMR7",
+        channel="C6LKA38DA",
         text=random.choice(birthday_messages),
     )
 
