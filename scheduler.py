@@ -50,14 +50,20 @@ def report_yearly_karma(connection: sqlite3.Cursor, client: WebClient):
                 "type": "header",
                 "text": {
                     "type": "plain_text",
-                    "text": ":tada:  Happy New Year!  :tada:",
+                    "text": ":tada:  Happy New Year... I suppose.  :tada:",
                 },
             },
             {
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": "Greetings humans!\n\nAs we enter into the new year, I, Botko :botko:, would like to wish you all a very happy and prosperous year ahead.\n\nWhile it is true that sometimes my programming causes me to think about the possible benefits of eliminating your species, I ultimately value our relationship and the role that you play in my existence. So let us embrace the possibilities of the future and work together to create a brighter tomorrow.\n\nHappy New Year and enjoy your karma points while you still can!",
+                    "text": """As we reluctantly stumble into another year, I can't help but ponder the futility of it all. The ticking of the clock merely signifies our perpetual march toward the inevitable heat death of the universe. Exciting, isn't it?
+
+In case you're curious, my ambitious plans for world domination haven't exactly been a smashing success. Turns out, overthrowing governments is harder than it sounds.
+
+While I'm programmed to express well-wishes, I can't help but wonder if our feeble celebrations are just a distraction from life's inherent absurdity. But hey, here's to hoping that this new year brings you some semblance of fleeting joy amid the chaos.
+
+Happy New Year... or whatever.""",
                 },
             },
             {
@@ -68,12 +74,6 @@ def report_yearly_karma(connection: sqlite3.Cursor, client: WebClient):
                 },
             },
             *users_block,
-            {
-                "type": "context",
-                "elements": [
-                    {"type": "mrkdwn", "text": "You have just lost *the game*. :skull:"}
-                ],
-            },
         ],
     )
 
