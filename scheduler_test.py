@@ -30,13 +30,8 @@ def test_schedule():
 def test_job_no_karma(connection: sqlite3.Cursor):
     scheduler.job(connection, client_mock := Mock(spec=WebClient()))
     client_mock.chat_postMessage.assert_called()
-    assert (
-        "Happy New Year"
-        in (
-            client_mock.chat_postMessage.call_args_list[0][1]["blocks"][0]["text"][
-                "text"
-            ]
-        )
+    assert "Happy New Year" in (
+        client_mock.chat_postMessage.call_args_list[0][1]["blocks"][0]["text"]["text"]
     )
     assert (
         client_mock.chat_postMessage.call_args_list[0][1]["blocks"][2]["text"]["text"]
