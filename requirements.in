@@ -1,7 +1,8 @@
-starlette
+gunicorn
 python-dotenv
-slack_bolt
-uvicorn
-sentry-sdk
 schedule
+sentry-sdk
+slack_bolt
+starlette
 urllib3
+uvicorn
