@@ -100,7 +100,7 @@ async def endpoint(req):
 
 
 def heartbeat(_):
-    return PlainTextResponse("Hello 👋")
+    return PlainTextResponse("Hello 🤖")
 
 
 api = Starlette(
