@@ -36,6 +36,7 @@ mypy-extensions==1.0.0
     #   mypy
 packaging==23.2
     # via
+    #   -c requirements.txt
     #   black
     #   pytest
 pathspec==0.12.1
