@@ -36,5 +36,5 @@ urllib3==2.1.0
     # via
     #   -r requirements.in
     #   sentry-sdk
-uvicorn==0.25.0
+uvicorn==0.26.0
     # via -r requirements.in
