@@ -4,7 +4,7 @@
 #
 #    pip-compile dev-requirements.in
 #
-astroid==3.0.2
+astroid==3.0.3
     # via pylint
 black==24.1.1
     # via -r dev-requirements.in
@@ -41,7 +41,7 @@ packaging==23.2
     #   pytest
 pathspec==0.12.1
     # via black
-platformdirs==4.1.0
+platformdirs==4.2.0
     # via
     #   black
     #   pylint
