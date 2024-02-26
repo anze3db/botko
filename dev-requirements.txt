@@ -4,7 +4,7 @@
 #
 #    pip-compile dev-requirements.in
 #
-astroid==3.0.3
+astroid==3.1.0
     # via pylint
 black==24.2.0
     # via -r dev-requirements.in
@@ -47,9 +47,9 @@ platformdirs==4.2.0
     #   pylint
 pluggy==1.4.0
     # via pytest
-pylint==3.0.3
+pylint==3.1.0
     # via -r dev-requirements.in
-pytest==8.0.1
+pytest==8.0.2
     # via
     #   -r dev-requirements.in
     #   pytest-watch
@@ -61,7 +61,7 @@ six==1.16.0
     # via python-dateutil
 tomlkit==0.12.3
     # via pylint
-typing-extensions==4.9.0
+typing-extensions==4.10.0
     # via mypy
 watchdog==4.0.0
     # via pytest-watch
