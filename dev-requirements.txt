@@ -61,7 +61,7 @@ six==1.16.0
     # via python-dateutil
 tomlkit==0.12.4
     # via pylint
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via mypy
 watchdog==4.0.0
     # via pytest-watch
