@@ -10,7 +10,7 @@ certifi==2024.2.2
     # via sentry-sdk
 click==8.1.7
     # via uvicorn
-gunicorn==21.2.0
+gunicorn==22.0.0
     # via -r requirements.in
 h11==0.14.0
     # via uvicorn
