@@ -22,7 +22,7 @@ python-dotenv==1.0.1
     # via -r requirements.in
 schedule==1.2.1
     # via -r requirements.in
-sentry-sdk==2.0.1
+sentry-sdk==2.1.1
     # via -r requirements.in
 slack-bolt==1.18.1
     # via -r requirements.in
