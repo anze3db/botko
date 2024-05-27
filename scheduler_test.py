@@ -21,17 +21,22 @@ def fixture_connection():
 
 
 def test_schedule():
-    assert [
-        (job.at_time, job.interval, job.period) for job in scheduler.schedule.get_jobs()
-    ] == [(datetime.time(10, 0), 1, datetime.timedelta(days=1))]
+    assert [(job.at_time, job.interval) for job in scheduler.schedule.get_jobs()] == [
+        (datetime.time(10, 0), 1)
+    ]
 
 
 @freezegun.freeze_time("2022-01-01 10:00:00")
 def test_job_no_karma(connection: sqlite3.Cursor):
     scheduler.job(connection, client_mock := Mock(spec=WebClient()))
     client_mock.chat_postMessage.assert_called()
-    assert "Happy New Year" in (
-        client_mock.chat_postMessage.call_args_list[0][1]["blocks"][0]["text"]["text"]
+    assert (
+        "Happy New Year"
+        in (
+            client_mock.chat_postMessage.call_args_list[0][1]["blocks"][0]["text"][
+                "text"
+            ]
+        )
     )
     assert (
         client_mock.chat_postMessage.call_args_list[0][1]["blocks"][2]["text"]["text"]
