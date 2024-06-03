@@ -6,7 +6,7 @@
 #
 anyio==4.4.0
     # via starlette
-certifi==2024.2.2
+certifi==2024.6.2
     # via sentry-sdk
 click==8.1.7
     # via uvicorn
@@ -36,5 +36,5 @@ urllib3==2.2.1
     # via
     #   -r requirements.in
     #   sentry-sdk
-uvicorn==0.29.0
+uvicorn==0.30.1
     # via -r requirements.in
