@@ -16,13 +16,13 @@ h11==0.14.0
     # via uvicorn
 idna==3.7
     # via anyio
-packaging==24.0
+packaging==24.1
     # via gunicorn
 python-dotenv==1.0.1
     # via -r requirements.in
 schedule==1.2.2
     # via -r requirements.in
-sentry-sdk==2.3.1
+sentry-sdk==2.5.1
     # via -r requirements.in
 slack-bolt==1.18.1
     # via -r requirements.in

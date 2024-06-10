@@ -34,7 +34,7 @@ mypy-extensions==1.0.0
     # via
     #   black
     #   mypy
-packaging==24.0
+packaging==24.1
     # via
     #   -c requirements.txt
     #   black
@@ -47,9 +47,9 @@ platformdirs==4.2.2
     #   pylint
 pluggy==1.5.0
     # via pytest
-pylint==3.2.2
+pylint==3.2.3
     # via -r dev-requirements.in
-pytest==8.2.1
+pytest==8.2.2
     # via
     #   -r dev-requirements.in
     #   pytest-watch
@@ -61,7 +61,7 @@ six==1.16.0
     # via python-dateutil
 tomlkit==0.12.5
     # via pylint
-typing-extensions==4.12.1
+typing-extensions==4.12.2
     # via mypy
 watchdog==4.0.1
     # via pytest-watch
