@@ -4,7 +4,7 @@
 #
 #    pip-compile dev-requirements.in
 #
-astroid==3.2.2
+astroid==3.2.3
     # via pylint
 black==24.4.2
     # via -r dev-requirements.in
@@ -59,7 +59,7 @@ python-dateutil==2.9.0.post0
     # via freezegun
 six==1.16.0
     # via python-dateutil
-tomlkit==0.12.5
+tomlkit==0.13.0
     # via pylint
 typing-extensions==4.12.2
     # via mypy
