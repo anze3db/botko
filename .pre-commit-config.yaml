@@ -30,8 +30,3 @@ repos:
         name: pip-compile requirements.in
         args: [requirements.in]
         files: ^requirements\.(in|txt)$
-      - id: pip-compile
-        language_version: python3.12
-        name: pip-compile dev-requirements.txt
-        args: [dev-requirements.in]
-        files: ^dev-requirements\.(in|txt)$

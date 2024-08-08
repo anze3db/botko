@@ -20,7 +20,7 @@ Set up the dev environment:
 python -m venv .venv  # Should be using Python 3.12 or newer
 . .venv/bin/activate
 pip install pip-tools
-pip-sync requirements.txt dev-requirements.txt
+pip-sync requirements.txt
 ```
 
 Run tests:
