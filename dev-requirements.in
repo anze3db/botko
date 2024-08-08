@@ -1,8 +1,0 @@
--c requirements.txt
-black
-freezegun
-isort
-mypy
-pylint
-pytest
-pytest-watch

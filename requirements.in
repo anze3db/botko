@@ -6,3 +6,10 @@ slack_bolt
 starlette
 urllib3
 uvicorn
+# Dev
+freezegun
+mypy
+pylint
+pytest
+pytest-watch
+ruff
