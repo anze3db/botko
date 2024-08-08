@@ -8,14 +8,10 @@ anyio==4.4.0
     # via starlette
 astroid==3.2.4
     # via pylint
-black==24.8.0
-    # via -r requirements.in
 certifi==2024.7.4
     # via sentry-sdk
 click==8.1.7
-    # via
-    #   black
-    #   uvicorn
+    # via uvicorn
 colorama==0.4.6
     # via pytest-watch
 dill==0.3.8
@@ -33,28 +29,19 @@ idna==3.7
 iniconfig==2.0.0
     # via pytest
 isort==5.13.2
-    # via
-    #   -r requirements.in
-    #   pylint
+    # via pylint
 mccabe==0.7.0
     # via pylint
 mypy==1.11.1
     # via -r requirements.in
 mypy-extensions==1.0.0
-    # via
-    #   black
-    #   mypy
+    # via mypy
 packaging==24.1
     # via
-    #   black
     #   gunicorn
     #   pytest
-pathspec==0.12.1
-    # via black
 platformdirs==4.2.2
-    # via
-    #   black
-    #   pylint
+    # via pylint
 pluggy==1.5.0
     # via pytest
 pylint==3.2.6
@@ -68,6 +55,8 @@ pytest-watch==4.2.0
 python-dateutil==2.9.0.post0
     # via freezegun
 python-dotenv==1.0.1
+    # via -r requirements.in
+ruff==0.5.7
     # via -r requirements.in
 schedule==1.2.2
     # via -r requirements.in

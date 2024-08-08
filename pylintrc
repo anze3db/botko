@@ -101,7 +101,7 @@ disable=
     missing-docstring,
     protected-access,
     too-few-public-methods,
-    # handled by black
+    # handled by ruff
     format
 
 
