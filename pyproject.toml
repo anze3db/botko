@@ -1,0 +1,25 @@
+[project]
+name = "botko"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "gunicorn",
+    "python-dotenv",
+    "schedule",
+    "sentry-sdk",
+    "slack_bolt",
+    "starlette",
+    "urllib3",
+    "uvicorn",
+]
+[tool.uv]
+dev-dependencies = [
+    "freezegun",
+    "mypy",
+    "pylint",
+    "pytest",
+    "pytest-watch",
+    "ruff",
+]

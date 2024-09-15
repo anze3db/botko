@@ -17,20 +17,17 @@ cp .env.example .env
 Set up the dev environment:
 
 ```
-python -m venv .venv  # Should be using Python 3.12 or newer
-. .venv/bin/activate
-pip install pip-tools
-pip-sync requirements.txt
+uv sync
 ```
 
 Run tests:
 ```
-ptw
+uv run ptw
 ```
 
 Run server:
 ```
-uvicorn app:api --log-level info --reload --port 3000
+uv run uvicorn app:api --log-level info --reload --port 3000
 ```
 
 You'll need to set the `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET` `env` variables from https://api.slack.com/apps/
