@@ -22,7 +22,7 @@ jobs:
         cp .env.example .env
     - name: Test with pytest
       run: |
-        uv run pytest
+        uv run --frozen pytest
   deploy:
     runs-on: ubuntu-latest
     needs: test
