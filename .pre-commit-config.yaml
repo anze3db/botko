@@ -1,5 +1,5 @@
 ci:
-  skip: [pip-compile, mypy]
+  skip: [mypy]
   autoupdate_schedule: 'monthly'
 repos:
   - repo: 'https://github.com/pre-commit/pre-commit-hooks'
@@ -12,11 +12,3 @@ repos:
     rev: 'v1.11.2'
     hooks:
       - id: mypy
-  - repo: 'https://github.com/jazzband/pip-tools'
-    rev: 7.4.1
-    hooks:
-      - id: pip-compile
-        language_version: python3.12
-        name: pip-compile requirements.in
-        args: [requirements.in]
-        files: ^requirements\.(in|txt)$

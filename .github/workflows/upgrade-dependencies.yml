@@ -12,17 +12,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Install the latest version of uv
-      uses: astral-sh/setup-uv@v2
+      uses: astral-sh/setup-uv@v3
       with:
         enable-cache: true
         version: "latest"
     - name: Upgrade dependencies
       run: |
-        uv sync --upgrade
+        uv lock --upgrade
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v3
+      uses: peter-evans/create-pull-request@v7
       with:
         commit-message: Update dependencies
         branch: bot/update_dependencies
