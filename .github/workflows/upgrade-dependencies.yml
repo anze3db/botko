@@ -30,5 +30,4 @@ jobs:
         title: 'Update dependencies'
         body: |
           New updates for project dependencies 🚀
-        reviewers: anze3db
         token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
