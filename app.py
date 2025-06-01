@@ -54,7 +54,7 @@ def say_hello(message, say):
 def list_karma_emojis(message, say):
     say(
         "Here are the emojis you can use to give karma:\n"
-        + "\n".join(f":{emoji}:" for emoji in KARMA_EMOJIS)
+        + " ".join(f":{emoji}:" for emoji in KARMA_EMOJIS)
     )
 
 
