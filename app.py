@@ -21,11 +21,41 @@ app = App(
     token_verification_enabled=False,
 )
 
+KARMA_EMOJIS = (
+    "botko",
+    "100",
+    "1000",
+    "+1",
+    "thumbs",
+    "thumbsup_all",
+    "heavy_plus_sign::laughing",
+    "joy",
+    "rolling_on_the_floor_laughing",
+    "joy_cat",
+    "smile",
+    "smiling_face_with_3_hearts",
+    "heart",
+    "hearts",
+    "lolsob",
+    "fire",
+    "rocket",
+    "tada",
+    "face_holding_back_tears",
+)
+
 
 @app.message(":wave:")
 def say_hello(message, say):
     user = message["user"]
     say(f"Hi there, <@{user}>!")
+
+
+@app.message("karma emojis")
+def list_karma_emojis(message, say):
+    say(
+        "Here are the emojis you can use to give karma:\n"
+        + "\n".join(f":{emoji}:" for emoji in KARMA_EMOJIS)
+    )
 
 
 @app.message(re.compile(r"\+\+"))
@@ -49,6 +79,18 @@ def handle_message_with_karma(client: WebClient, message):
             text=f"I can't let you do that <@{message['user']}>. You can't give karma to yourself.",
             thread_ts=message["ts"],
         )
+
+
+@app.event("reaction_added")
+def handle_reaction_added(client: WebClient, event):
+    if event["reaction"] in KARMA_EMOJIS and event["item_user"] != event["user"]:
+        with get_connection() as cursor:
+            insert_karma(
+                cursor,
+                event["item"]["channel"],
+                event["item"]["ts"],
+                [event["user"]],
+            )
 
 
 @app.event("app_home_opened")
