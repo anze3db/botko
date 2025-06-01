@@ -90,7 +90,7 @@ def handle_reaction_added(client: WebClient, event):
                 cursor,
                 event["item"]["channel"],
                 event["item"]["ts"],
-                [event["user"]],
+                [event["item_user"]],
             )
 
 
