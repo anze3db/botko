@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 from datetime import datetime
@@ -14,6 +15,8 @@ from db import get_connection
 from models import fetch_karma_leaderboard, insert_karma, parse_karma_from_text
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
 
 app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
@@ -84,6 +87,7 @@ def handle_message_with_karma(client: WebClient, message):
 
 @app.event("reaction_added")
 def handle_reaction_added(client: WebClient, event):
+    logger.info("Received reaction_added event: %s", event)
     if event["reaction"] in KARMA_EMOJIS and event["item_user"] != event["user"]:
         with get_connection() as cursor:
             insert_karma(
@@ -96,6 +100,7 @@ def handle_reaction_added(client: WebClient, event):
 
 @app.event("app_home_opened")
 def update_home_tab(client, event):
+    logger.info("Loading home tab for user: %s", event["user"])
     with get_connection() as cursor:
         users = list(fetch_karma_leaderboard(cursor))
     client.views_publish(
