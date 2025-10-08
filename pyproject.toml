@@ -3,7 +3,7 @@ name = "botko"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dependencies = [
     "gunicorn",
     "python-dotenv",
@@ -13,9 +13,7 @@ dependencies = [
     "starlette",
     "urllib3",
     "uvicorn",
-]
-[tool.uv]
-dev-dependencies = [
+    # Dev
     "freezegun",
     "mypy",
     "pylint",
