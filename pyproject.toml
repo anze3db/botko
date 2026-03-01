@@ -5,19 +5,22 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "django",
     "gunicorn",
+    "psycopg[binary]",
     "python-dotenv",
     "schedule",
     "sentry-sdk",
     "slack_bolt",
-    "starlette",
     "urllib3",
-    "uvicorn",
     # Dev
     "freezegun",
     "mypy",
-    "pylint",
     "pytest",
-    "pytest-watch",
-    "ruff",
+    "pytest-django",
+    "pytest-watcher",
+    "ruff"
 ]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "botko.settings"

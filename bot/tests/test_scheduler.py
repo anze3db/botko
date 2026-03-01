@@ -1,6 +1,5 @@
 import datetime
-import sqlite3
-import time
+from datetime import timedelta
 from unittest.mock import Mock
 
 import freezegun
@@ -8,16 +7,7 @@ import pytest
 from slack_sdk.web.client import WebClient
 
 import scheduler
-from db import get_connection, init_db
-from models import insert_birthday, insert_karma
-
-
-@pytest.fixture(name="connection")
-def fixture_connection():
-    with get_connection() as connection:
-        init_db(connection)
-        connection.execute("delete from karma")
-        yield connection
+from bot.models import Birthday, Karma
 
 
 def test_schedule():
@@ -27,8 +17,9 @@ def test_schedule():
 
 
 @freezegun.freeze_time("2022-01-01 10:00:00")
-def test_job_no_karma(connection: sqlite3.Cursor):
-    scheduler.job(connection, client_mock := Mock(spec=WebClient()))
+@pytest.mark.django_db
+def test_job_no_karma():
+    scheduler.job(client_mock := Mock(spec=WebClient()))
     client_mock.chat_postMessage.assert_called()
     assert "Happy New Year" in (
         client_mock.chat_postMessage.call_args_list[0][1]["blocks"][0]["text"]["text"]
@@ -52,8 +43,9 @@ def test_job_no_karma(connection: sqlite3.Cursor):
 
 
 @freezegun.freeze_time("2022-02-01 10:00:00")
-def test_job_no_karma_not_in_jan(connection: sqlite3.Cursor):
-    scheduler.job(connection, client_mock := Mock(spec=WebClient()))
+@pytest.mark.django_db
+def test_job_no_karma_not_in_jan():
+    scheduler.job(client_mock := Mock(spec=WebClient()))
     client_mock.chat_postMessage.assert_called()
     assert (
         client_mock.chat_postMessage.call_args_list[0][1]["blocks"][0]["text"]["text"]
@@ -66,35 +58,27 @@ def test_job_no_karma_not_in_jan(connection: sqlite3.Cursor):
 
 
 @freezegun.freeze_time("2022-01-02 10:00:00")
-def test_job_only_on_first(connection: sqlite3.Cursor):
-    scheduler.job(connection, client_mock := Mock(spec=WebClient()))
+@pytest.mark.django_db
+def test_job_only_on_first():
+    scheduler.job(client_mock := Mock(spec=WebClient()))
     client_mock.chat_postMessage.assert_not_called()
 
 
 @freezegun.freeze_time("2022-01-01 10:00:00")
-def test_job_karma(connection: sqlite3.Cursor):
-    insert_karma(
-        connection,
-        channel="C02SBSSCMR7",
-        ts=f"{time.time() - 12 * 60 * 60}",
-        users=["U123123", "U123124"],
-    )
-    # Previous month shouldn't be counted
-    insert_karma(
-        connection,
-        channel="C02SBSSCMR7",
-        ts=f"{time.time() - 32 * 24 * 60 * 60}",
-        users=["U123123", "U123124"],
-    )
-    # Current month shouldn't be counted
-    insert_karma(
-        connection,
-        channel="C02SBSSCMR7",
-        ts=f"{time.time()}",
-        users=["U123123", "U123124"],
-    )
+@pytest.mark.django_db
+def test_job_karma():
+    now = datetime.datetime.now()
+    # Previous day (same month = December 2021)
+    Karma.objects.create(channel="C02SBSSCMR7", ts="1", user="U123123", created_at=now - timedelta(hours=12))
+    Karma.objects.create(channel="C02SBSSCMR7", ts="1", user="U123124", created_at=now - timedelta(hours=12))
+    # Previous month (November 2021) — shouldn't be in monthly
+    Karma.objects.create(channel="C02SBSSCMR7", ts="2", user="U123123", created_at=now - timedelta(days=32))
+    Karma.objects.create(channel="C02SBSSCMR7", ts="2", user="U123124", created_at=now - timedelta(days=32))
+    # Current month (January 2022) — shouldn't be in prev month/year
+    Karma.objects.create(channel="C02SBSSCMR7", ts="3", user="U123123", created_at=now)
+    Karma.objects.create(channel="C02SBSSCMR7", ts="3", user="U123124", created_at=now)
 
-    scheduler.job(connection, client_mock := Mock(spec=WebClient()))
+    scheduler.job(client_mock := Mock(spec=WebClient()))
     client_mock.chat_postMessage.assert_called()
 
     assert (
@@ -116,8 +100,9 @@ def test_job_karma(connection: sqlite3.Cursor):
 
 
 @freezegun.freeze_time("2023-08-07 10:00:00")
-def test_birthdays(connection: sqlite3.Cursor):
-    insert_birthday(connection, "U123123", 7, 8)
-    scheduler.job(connection, client_mock := Mock(spec=WebClient()))
+@pytest.mark.django_db
+def test_birthdays():
+    Birthday.objects.create(user="U123123", day=7, month=8)
+    scheduler.job(client_mock := Mock(spec=WebClient()))
     client_mock.chat_postMessage.assert_called()
     assert "<@U123123>" in client_mock.chat_postMessage.call_args_list[0][1]["text"]

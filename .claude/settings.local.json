@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(wc:*)",
+      "Bash(sqlite3:*)",
+      "Bash(uv sync:*)",
+      "Bash(TESTING=true uv run:*)",
+      "Bash(env:*)",
+      "Bash(uv run:*)",
+      "Bash(uv lock:*)"
+    ]
+  }
+}
