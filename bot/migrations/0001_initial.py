@@ -5,37 +5,51 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Birthday',
+            name="Birthday",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('user', models.TextField(unique=True)),
-                ('day', models.IntegerField()),
-                ('month', models.IntegerField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("user", models.TextField(unique=True)),
+                ("day", models.IntegerField()),
+                ("month", models.IntegerField()),
             ],
             options={
-                'db_table': 'birthday',
+                "db_table": "birthday",
             },
         ),
         migrations.CreateModel(
-            name='Karma',
+            name="Karma",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('channel', models.TextField()),
-                ('ts', models.TextField()),
-                ('user', models.TextField()),
-                ('emoji', models.TextField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(default=datetime.datetime.now)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("channel", models.TextField()),
+                ("ts", models.TextField()),
+                ("user", models.TextField()),
+                ("emoji", models.TextField(blank=True, null=True)),
+                ("created_at", models.DateTimeField(default=datetime.datetime.now)),
             ],
             options={
-                'db_table': 'karma',
+                "db_table": "karma",
             },
         ),
     ]

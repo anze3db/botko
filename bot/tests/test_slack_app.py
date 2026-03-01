@@ -145,7 +145,11 @@ def test_update_home_tab(client_mock: Mock):
         created_at=now - timedelta(days=700),
     )
     # Current year karma
-    Karma.give_karma("C02SBSSCMR7", "new", ["U02RW93RGBX", "U02RW93RGBX", "U6LJ2A03A", "U6LJ2A03A", "U6LJ2A03A"])
+    Karma.give_karma(
+        "C02SBSSCMR7",
+        "new",
+        ["U02RW93RGBX", "U02RW93RGBX", "U6LJ2A03A", "U6LJ2A03A", "U6LJ2A03A"],
+    )
 
     update_home_tab(client=client_mock, event=dict(user="123"))
     client_mock.views_publish.assert_called()
