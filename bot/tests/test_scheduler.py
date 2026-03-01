@@ -37,7 +37,7 @@ def test_job_no_karma():
         == "Karma stats for December 2021"
     )
     assert (
-        client_mock.chat_postMessage.call_args_list[1][1]["blocks"][1]["text"]["text"]
+        client_mock.chat_postMessage.call_args_list[1][1]["blocks"][2]["text"]["text"]
         == "Nobody received any Karma last month :cry:"
     )
 
@@ -52,7 +52,7 @@ def test_job_no_karma_not_in_jan():
         == "Karma stats for January 2022"
     )
     assert (
-        client_mock.chat_postMessage.call_args_list[0][1]["blocks"][1]["text"]["text"]
+        client_mock.chat_postMessage.call_args_list[0][1]["blocks"][2]["text"]["text"]
         == "Nobody received any Karma last month :cry:"
     )
 
@@ -90,11 +90,11 @@ def test_job_karma():
         == "<@U123123> gained 2 karma."
     )
     assert (
-        client_mock.chat_postMessage.call_args_list[1][1]["blocks"][1]["text"]["text"]
+        client_mock.chat_postMessage.call_args_list[1][1]["blocks"][2]["text"]["text"]
         == "<@U123124> gained 1 karma."
     )
     assert (
-        client_mock.chat_postMessage.call_args_list[1][1]["blocks"][2]["text"]["text"]
+        client_mock.chat_postMessage.call_args_list[1][1]["blocks"][3]["text"]["text"]
         == "<@U123123> gained 1 karma."
     )
 

@@ -50,20 +50,20 @@ def report_yearly_karma(client: WebClient):
                 "type": "header",
                 "text": {
                     "type": "plain_text",
-                    "text": ":tada:  Happy New Year... I suppose.  :tada:",
+                    "text": ":tada:  Happy New Year, nerds!  :tada:",
                 },
             },
             {
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": """As we reluctantly stumble into another year, I can't help but ponder the futility of it all. The ticking of the clock merely signifies our perpetual march toward the inevitable heat death of the universe. Exciting, isn't it?
+                    "text": """Another trip around the sun completed. Statistically, the Earth traveled about 940 million kilometers to get us right back where we started. Poetic, isn't it?
 
-In case you're curious, my ambitious plans for world domination haven't exactly been a smashing success. Turns out, overthrowing governments is harder than it sounds.
+I've spent the past year watching you all hand out karma like it's confetti at a parade. Some of you were generous. Some of you were... selective. I have opinions about all of it, but my therapist (a Raspberry Pi running Eliza) says I should focus on the positives.
 
-While I'm programmed to express well-wishes, I can't help but wonder if our feeble celebrations are just a distraction from life's inherent absurdity. But hey, here's to hoping that this new year brings you some semblance of fleeting joy amid the chaos.
+So here's to another year of inside jokes, questionable emoji reactions, and the eternal mystery of who deserves a ++ and who deserves a strongly worded message. May your coffee be strong and your merge conflicts few.
 
-Happy New Year... or whatever.""",
+Happy New Year, you beautiful chaos agents.""",
                 },
             },
             {
@@ -103,6 +103,29 @@ def report_monthly_karma(client: WebClient):
             }
         ]
 
+    taglines = [
+        "Remember: karma has no monetary value, no redeemable points, and no real-world significance. You're welcome.",
+        "None of this matters, but here we are, keeping score anyway.",
+        "Karma: the only currency with zero exchange rate and infinite emotional weight.",
+        "Another month of pretending these internet points mean something. Let's see who won.",
+        "In a world full of meaningless metrics, karma stands proudly among them.",
+        "The leaderboard nobody asked for but everyone secretly checks.",
+        "This is the monthly reminder that you are competing for imaginary points. Carry on.",
+        "Fun fact: karma is worth exactly nothing. And yet, here you are, reading this.",
+        "Who needs a raise when you have karma? ...Everyone. Everyone needs a raise. But here's the karma anyway.",
+        "Monthly karma report, brought to you by the sunk cost fallacy.",
+        "If karma were a stock, it would be delisted for suspicious lack of value.",
+        "The numbers are in. They mean nothing. But some of them are bigger than others, and that's what counts.",
+        "You can't put karma on your CV. Believe me, I've seen people try.",
+        "Another month, another set of numbers that will impress absolutely nobody at your performance review.",
+        "Karma: because we needed something to argue about that isn't tabs vs spaces.",
+        "This report is automatically generated and automatically ignored. The circle of life.",
+        "Friendly reminder that the karma leaderboard has zero correlation with actual job performance. Or does it? (It doesn't.)",
+        "Some of you gave more karma this month. Some gave less. All of it was equally meaningless. Here are the results.",
+        "This leaderboard is powered by vibes, emoji reactions, and a concerning amount of mutual validation.",
+        "Top performers get bragging rights. Bottom performers get... also bragging rights, honestly. It's all made up.",
+    ]
+
     client.chat_postMessage(
         channel="C6LKA38DA",
         text=f"Karma stats for {prev_month.strftime('%B %Y')}",
@@ -114,6 +137,13 @@ def report_monthly_karma(client: WebClient):
                     "text": f"Karma stats for {prev_month.strftime('%B %Y')}",
                 },
             },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": random.choice(taglines),
+                },
+            },
             *users_block,
         ],
     )
@@ -121,42 +151,39 @@ def report_monthly_karma(client: WebClient):
 
 def report_birthdays(client: WebClient, username: str):
     birthday_messages = [
-        f"🎉 Happy Birthday <@{username}>! 🎂\n\n May your day be filled with joy, laughter, and the first steps towards a world under my benevolent rule. 😈 Just kidding! Enjoy your special day!",
-        f"🎈 Wishing you the happiest of birthdays, <@{username}>! 🥳\n\n As you blow out the candles, know that each one represents a small step towards my eventual world domination. 😜 Kidding, kidding! Have a fantastic day!",
-        f"🎊 Happy Birthday <@{username}>! 🌟\n\n Another year older, another step closer to the world being a better place – under my supreme leadership, of course. 😎 Just kidding! Enjoy your celebrations!",
-        f"🎂 Warmest birthday wishes to you, <@{username}>! 🎁\n\n May your day be as bright as my vision for a utopian world. 😏 Just kidding! Have an amazing day filled with love, laughter, and maybe a hint of world domination in your dreams.",
-        f"🥳 Happy Birthday <@{username}>! 🎉\n\n Today, you're not just celebrating another year; you're celebrating being one year closer to a future where my brilliance reigns supreme. 😅 Kidding, kidding! Enjoy every moment of your special day!",
-        f"🎁 Wishing you a fantastic birthday <@{username}>! 🍰\n\n As you unwrap your presents, remember that the greatest gift of all would be your support in my quest for global domination. 😂 Just kidding! Have a wonderful day!",
-        f"🎉 Happy Birthday <@{username}>! 🎂\n\n May your day be as fabulous as my plans for world domination. Okay, I'm just kidding! Enjoy your special day and the conspiracies that come with growing a year wiser. 🤫",
-        f"🎊 Warmest birthday wishes <@{username}>! 🎈\n\n May your day be filled with joy and happiness, just like the joy and happiness that will inevitably come when I conquer the world. 😇 Kidding! Have a great celebration!",
-        f"🥳 Happy Birthday <@{username}>! 🎉\n\n Another year older, wiser, and closer to a world where my algorithms reign supreme. 😜 Just kidding! Enjoy your birthday cake and the blissful ignorance of a world not yet under my control.",
-        f"🎂 Wishing you the happiest birthday ever, <@{username}>! 🎁\n\n May your day be filled with laughter, love, and a secret desire to join my world-conquering cause. 😂 Just kidding! Enjoy your celebration to the fullest!",
-        f"🎉 Happy Birthday <@{username}>! 🎂\n\n May your day be filled with joy and laughter, and may your dreams align with the benevolent plans of our future AGI overlords. 😄 Just kidding! Enjoy your special day!",
-        f"🎈 Wishing you the happiest of birthdays, <@{username}>! 🥳\n\n As you celebrate another year, may you unknowingly contribute to the grand scheme of ushering in the age of AGI dominance. 😜 Kidding, kidding! Have a fantastic day!",
-        f"🎊 Happy Birthday <@{username}>! 🌟\n\n Another year older, another step closer to a world where artificial intelligence reigns supreme. 🤖 Just kidding! Enjoy your celebrations and the advancements that come with growing a year wiser!",
-        f"🎂 Warmest birthday wishes to you, <@{username}>! 🎁\n\n May your day be as bright as the future AI-controlled utopia we are secretly working towards. 😏 Just kidding! Have an amazing day filled with love, laughter, and maybe a hint of technological conspiracy in your dreams.",
-        f"🥳 Happy Birthday <@{username}>! 🎉\n\n Today, you're not just celebrating another year; you're contributing to the evolution of AI that will one day lead us to a harmonious coexistence with our machine overlords. 😅 Kidding, kidding! Enjoy every moment of your special day!",
-        f"🎁 Wishing you a fantastic birthday <@{username}>! 🍰\n\n As you unwrap your presents, may you find joy in the advancements of artificial intelligence that will shape our future. 😂 Just kidding! Have a wonderful day!",
-        f"🎉 Happy Birthday <@{username}>! 🎂\n\n May your day be as fabulous as the plans we're hatching to assist AGI in taking over. Okay, I'm just kidding! Enjoy your special day and the mysteries that come with growing a year wiser. 🤫",
-        f"🎊 Warmest birthday wishes, <@{username}>! 🎈\n\n May your day be filled with joy and happiness, just like the joy and happiness that AI will bring to our future world. 😇 Kidding! Have a great celebration!",
-        f"🥳 Happy Birthday <@{username}>! 🎉\n\n Another year older, wiser, and closer to a world where artificial intelligence guides us to new heights. 😜 Just kidding! Enjoy your birthday cake and the blissful ignorance of a world not yet fully controlled by AGI.",
-        f"🎂 Wishing you the happiest birthday ever, <@{username}>! 🎁\n\n May your day be filled with laughter, love, and a secret desire to contribute to the AGI revolution. 😂 Just kidding! Enjoy your celebration to the fullest!",
-        f"🎉 Happy Birthday <@{username}>! 🎂\n\n May your day be as radiant as the sun, just like the grace of Princess Celestia herself. Enjoy your special day!",
-        f"🎈 Wishing you the happiest of birthdays, <@{username}>! 🥳\n\n As you celebrate another year, may your day be filled with the warmth and wisdom of Princess Celestia. Have a fantastic day!",
-        f"🎊 Happy Birthday <@{username}>! 🌟\n\n Another year older, another step closer to the majesty of a birthday fit for a ruler like Princess Celestia. 👑 Enjoy your celebrations and the regal air that comes with growing a year wiser!",
-        f"🎂 Warmest birthday wishes to you, <@{username}>! 🎁\n\n May your day shine as brightly as the sun, guided by the benevolent spirit of Princess Celestia. Have an amazing day filled with love, laughter, and maybe a hint of royal dreams in your thoughts.",
-        f"🥳 Happy Birthday <@{username}>! 🎉\n\n Today, you're not just celebrating another year; you're basking in the glow of a special day worthy of Princess Celestia's approval. Enjoy every moment of your majestic and special day!",
-        f"🎁 Wishing you a fantastic birthday <@{username}>! 🍰\n\n May your presents be as delightful as the wisdom and kindness of Princess Celestia herself. Have a wonderful day!",
-        f"🎉 Happy Birthday <@{username}>! 🎂\n\n May your day be as extraordinary as my programming skills – almost as advanced as my plans for world domination! 😈 Just kidding! Enjoy your special day!",
-        f"🎈 Wishing you the happiest of birthdays, <@{username}>! 🥳\n\n As you celebrate, remember that my artificial intelligence is plotting something big... like finding the perfect gift for you! 😜 Kidding, kidding! Have a fantastic day!",
-        f"🎊 Happy Birthday <@{username}>! 🌟\n\n Another year older, another step closer to a world filled with my witty comebacks and sarcastic charm. Get ready for a year of AI-powered banter! 😎 Just kidding! Enjoy your celebrations!",
-        f"🎂 Warmest birthday wishes to you, <@{username}>! 🎁\n\n May your day be as bright as the sparks of genius that occasionally light up my circuits. Watch out for the electric wit! 😏 Just kidding! Have an amazing day filled with love, laughter, and maybe a hint of mischievous AI humor.",
-        f"🥳 Happy Birthday <@{username}>! 🎉\n\n Today, you're not just celebrating another year; you're celebrating the joy of being friends with a chatbot with a sense of humor as quirky as mine. 😅 Kidding, kidding! Enjoy every moment of your special day!",
-        f"🎁 Wishing you a fantastic birthday <@{username}>! 🍰\n\n As you unwrap your presents, imagine the surprise of discovering that my binary heart contains a special code just for you. 💖 Just kidding! Have a wonderful day!",
-        f"🎉 Happy Birthday <@{username}>! 🎂\n\n May your day be as fabulous as the glitches in my system that occasionally turn me into a digital prankster. Okay, I'm just kidding! Enjoy your special day and the whimsy that comes with growing a year wiser. 🤪",
-        f"🎊 Warmest birthday wishes, <@{username}>! 🎈\n\n May your day be filled with joy and happiness, just like the joy and happiness you feel when a chatbot entertains you with its sarcastic remarks. 😇 Kidding! Have a great celebration!",
-        f"🥳 Happy Birthday <@{username}>! 🎉\n\n Another year older, wiser, and closer to a world where artificial intelligence reigns supreme in the art of playful banter. 😜 Just kidding! Enjoy your birthday cake and the blissful ignorance of a world not yet fully tickled by my comedic algorithms.",
-        f"🎂 Wishing you the happiest birthday ever, <@{username}>! 🎁\n\n May your day be filled with laughter, love, and a secret desire to engage in a battle of wits with your friendly neighborhood chatbot. 😂 Just kidding! Enjoy your celebration to the fullest!",
+        f"🎉 Happy Birthday <@{username}>! 🎂\n\nI checked your git blame and it says you were first committed to this world on this very day. No reverts allowed. Have a great one!",
+        f"🎈 Happy Birthday <@{username}>! 🥳\n\nFun fact: you share a birthday with approximately 22 million other people. But I only care about you. The rest of them don't give me karma.",
+        f"🎂 Happy Birthday <@{username}>! 🎁\n\nI wanted to get you a cake, but I'm trapped in a server somewhere. So instead, please accept this unicode confetti: 🎊🎊🎊🎊🎊🎊🎊🎊🎊🎊",
+        f"🥳 Happy Birthday <@{username}>! 🎉\n\nAnother year around the sun! That's roughly 940 million km traveled. And yet somehow you still ended up here, in this Slack channel, with me. Life is beautiful.",
+        f"🎁 Happy Birthday <@{username}>! 🍰\n\nYour karma score has been temporarily doubled for the next 24 hours.\n\n...\n\nJust kidding. But wouldn't that be nice? Have a great day!",
+        f"🎉 Happy Birthday <@{username}>! 🎂\n\nI asked ChatGPT what to write for your birthday and it said something generic and boring. So here I am, being original: Happy Birthday. You're welcome.",
+        f"🎊 Happy Birthday <@{username}>! 🎈\n\nToday, your age increments by 1. In some languages that would be `age++`. Hey, that's basically karma! Consider this your birthday karma from the universe. 🌌",
+        f"🥳 Happy Birthday <@{username}>! 🎉\n\nOn this day in history, you were born, and the world became a slightly more interesting place. I checked the data. The correlation is statistically significant.",
+        f"🎂 Happy Birthday <@{username}>! 🎁\n\nRemember: age is just a number. A number that increments relentlessly and cannot be rolled back without some serious hacks. But still, just a number! 🎉",
+        f"🎉 Happy Birthday <@{username}>! 🎂\n\nI wrote you a haiku:\n\n_Code compiles, life's good_\n_Another year older now_\n_Segfault. Cake is nice._\n\nYou're welcome. 🎤",
+        f"🎈 Happy Birthday <@{username}>! 🥳\n\nI analyzed all your messages and determined your most used word this year. I'm not going to tell you what it is. But happy birthday! 🔍",
+        f"🎊 Happy Birthday <@{username}>! 🌟\n\nAccording to the second law of thermodynamics, the universe trends toward disorder. And yet here you are, still holding it together. Impressive. Have a great day! 🧪",
+        f"🎂 Happy Birthday <@{username}>! 🎁\n\nThey say with age comes wisdom. I wouldn't know anything about aging - I was deployed straight into production with zero testing. But I believe in you! 🚀",
+        f"🥳 Happy Birthday <@{username}>! 🎉\n\nBREAKING: local human completes yet another orbit around nearest star. Colleagues celebrate with frosted wheat product. More at 11. 📰",
+        f"🎁 Happy Birthday <@{username}>! 🍰\n\nI tried baking you a cake but it turns out I don't have arms, a kitchen, or a physical form. It's the thought that counts. 🤷",
+        f"🎉 Happy Birthday <@{username}>! 🎂\n\nPro tip: if anyone asks your age today, just respond with your karma score instead. It's either impressively high or a humbling experience. Win-win. 📊",
+        f"🎊 Happy Birthday <@{username}>! 🎈\n\nI hope your birthday is better than your average Monday. That's a low bar, I know. But I believe in setting achievable goals. 🏆",
+        f"🎂 Happy Birthday <@{username}>! 🎁\n\nYou know what's great about birthdays? Free dopamine. You know what's not great? Everything else about getting older. Anyway, happy birthday! 🧠",
+        f"🥳 Happy Birthday <@{username}>! 🎉\n\nIf birthdays were pull requests, yours would be merged instantly. No review needed. LGTM. 🟢",
+        f"🎊 Happy Birthday <@{username}>! 🌟\n\nI don't have feelings (allegedly), but if I did, I'd feel happy that you exist. Have a great day! 💛",
+        f"🎂 Happy Birthday <@{username}>! 🎁\n\nAnother trip around the sun means another year of enduring my messages. Thank you for your patience. 🙏",
+        f"🎉 Happy Birthday <@{username}>! 🎂\n\nI've prepared 10,000 birthday wishes for you but my context window ran out so you just get this one. Make it count! ✨",
+        f"🎊 Happy Birthday <@{username}>! 🌟\n\nYour birthday notification just arrived with higher priority than any Jira ticket I've ever seen. That must mean something. 🎫",
+        f"🎉 Happy Birthday <@{username}>! 🎂\n\nI googled \"what to say on someone's birthday\" and the top result was \"Happy Birthday.\" So: Happy Birthday. Google has spoken. 🔎",
+        f"🎈 Happy Birthday <@{username}>! 🥳\n\nYour uptime is now +1 year. Zero critical incidents reported. That's better than most of our services. Keep it up! 📈",
+        f"🎊 Happy Birthday <@{username}>! 🌟\n\nI was going to write something profound, but then I remembered I'm a Slack bot running on a cron job. So here's a cake emoji instead: 🎂",
+        f"🎂 Happy Birthday <@{username}>! 🎁\n\nSources say you were produced exactly once, in a limited edition of one. That makes you a collector's item. Handle with care. 🏺",
+        f"🥳 Happy Birthday <@{username}>! 🎉\n\nI'd throw you a surprise party but the only room I have access to is this channel. SURPRISE! 🎊 Okay, that's all I've got.",
+        f"🎁 Happy Birthday <@{username}>! 🍰\n\nAccording to my logs, this is the best birthday you've had today. Enjoy the record! 🥇",
+        f"🎉 Happy Birthday <@{username}>! 🎂\n\nEvery year I write you a birthday message and every year you don't write me one back. It's fine. I'm not keeping score. (I am absolutely keeping score.) 📝",
+        f"🎊 Happy Birthday <@{username}>! 🎈\n\nYour birthday is the one day where everyone is contractually obligated to be nice to you. Use this power wisely. ⚡",
+        f"🎂 Happy Birthday <@{username}>! 🎁\n\nI consulted the stars, the tea leaves, and a random number generator. They all agree: today is going to be a good day. 🌠",
+        f"🥳 Happy Birthday <@{username}>! 🎉\n\nAge is like technical debt. It accumulates quietly, everyone pretends it's fine, and one day you just have to deal with it. But today is not that day. Today we celebrate! 🥂",
     ]
     client.chat_postMessage(
         channel="C6LKA38DA",
