@@ -6,6 +6,7 @@ env = environ.Env(
     DEBUG=(bool, False),
     SECRET_KEY=(str, "insecure-dev-key-change-me"),
     DATABASE_URL=(str, "postgres://botko@localhost:5432/botko"),
+    ALLOWED_HOSTS=(list, ["localhost", "127.0.0.1", "[::1]"]),
 )
 
 environ.Env.read_env(Path(__file__).resolve().parent.parent / ".env", overwrite=True)
@@ -14,7 +15,7 @@ SECRET_KEY = env("SECRET_KEY")
 
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 
 INSTALLED_APPS = [
     "bot",
