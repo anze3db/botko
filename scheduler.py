@@ -1,25 +1,25 @@
 import os
 import random
-import sqlite3
 import time
 from datetime import datetime, timedelta
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "botko.settings")
+
+import django
+
+django.setup()
 
 import schedule
 from slack_sdk.web.client import WebClient
 from urllib3 import PoolManager, Retry
 
-from app import app
-from db import get_connection
-from models import (
-    fetch_birthdays,
-    fetch_karma_leaderboard_prev_month,
-    fetch_karma_leaderboard_prev_year,
-)
+from bot.models import Birthday, Karma
+from bot.slack_app import app
 
 
-def report_yearly_karma(connection: sqlite3.Cursor, client: WebClient):
+def report_yearly_karma(client: WebClient):
     prev_year = datetime.now().replace(day=1, month=1) - timedelta(days=1)
-    users = fetch_karma_leaderboard_prev_year(connection)
+    users = Karma.leaderboard_prev_year()
 
     users_block = [
         {
@@ -78,9 +78,9 @@ Happy New Year... or whatever.""",
     )
 
 
-def report_monthly_karma(connection: sqlite3.Cursor, client: WebClient):
+def report_monthly_karma(client: WebClient):
     prev_month = datetime.now().replace(day=1) - timedelta(days=1)
-    users = fetch_karma_leaderboard_prev_month(connection)
+    users = Karma.leaderboard_prev_month()
 
     users_block = [
         {
@@ -119,7 +119,7 @@ def report_monthly_karma(connection: sqlite3.Cursor, client: WebClient):
     )
 
 
-def report_birthdays(connection: sqlite3.Cursor, client: WebClient, username: str):
+def report_birthdays(client: WebClient, username: str):
     birthday_messages = [
         f"🎉 Happy Birthday <@{username}>! 🎂\n\n May your day be filled with joy, laughter, and the first steps towards a world under my benevolent rule. 😈 Just kidding! Enjoy your special day!",
         f"🎈 Wishing you the happiest of birthdays, <@{username}>! 🥳\n\n As you blow out the candles, know that each one represents a small step towards my eventual world domination. 😜 Kidding, kidding! Have a fantastic day!",
@@ -164,16 +164,16 @@ def report_birthdays(connection: sqlite3.Cursor, client: WebClient, username: st
     )
 
 
-def job(connection: sqlite3.Cursor, client: WebClient):
+def job(client: WebClient):
     now = datetime.now()
 
     if now.day == 1 and now.month == 1:
-        report_yearly_karma(connection, client)
+        report_yearly_karma(client)
     if now.day == 1:
-        report_monthly_karma(connection, client)
+        report_monthly_karma(client)
 
-    for birthday in fetch_birthdays(connection, now.day, now.month):
-        report_birthdays(connection, client, birthday["user"])
+    for birthday in Birthday.for_today():
+        report_birthdays(client, birthday.user)
 
     # Heartbeat
     if heartbeat_url := os.environ.get("HEARTBEAT_URL"):
@@ -183,16 +183,15 @@ def job(connection: sqlite3.Cursor, client: WebClient):
 
 
 def job_wrapper():
-    with get_connection() as connection:
-        job(connection, app.client)
+    job(app.client)
 
 
 schedule.every().day.at("10:00").do(job_wrapper)
 if __name__ == "__main__":
     import logging
 
-    logger = logging.getLogger("uvicorn.scheduler")
-    logger.info("⏰ Starting scheduler")
+    logger = logging.getLogger(__name__)
+    logger.info("Starting scheduler")
     while True:
         schedule.run_pending()
         time.sleep(1)

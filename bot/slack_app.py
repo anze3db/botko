@@ -3,18 +3,11 @@ import os
 import re
 from datetime import datetime
 
-from dotenv import load_dotenv
 from slack_bolt import App
-from slack_bolt.adapter.starlette import SlackRequestHandler
 from slack_sdk.web.client import WebClient
-from starlette.applications import Starlette
-from starlette.responses import PlainTextResponse
-from starlette.routing import Route
 
-from db import get_connection
-from models import fetch_karma_leaderboard, insert_karma, parse_karma_from_text
-
-load_dotenv()
+from bot.models import Karma
+from bot.utils import KARMA_EMOJIS, parse_karma_from_text
 
 logger = logging.getLogger(__name__)
 
@@ -22,29 +15,6 @@ app = App(
     token=os.environ.get("SLACK_BOT_TOKEN"),
     signing_secret=os.environ.get("SLACK_SIGNING_SECRET"),
     token_verification_enabled=False,
-)
-
-KARMA_EMOJIS = (
-    "botko",
-    "100",
-    "1000",
-    "+1",
-    "thumbs",
-    "thumbsup_all",
-    "heavy_plus_sign",
-    "laughing",
-    "joy",
-    "rolling_on_the_floor_laughing",
-    "joy_cat",
-    "smile",
-    "smiling_face_with_3_hearts",
-    "heart",
-    "hearts",
-    "lolsob",
-    "fire",
-    "rocket",
-    "tada",
-    "face_holding_back_tears",
 )
 
 
@@ -67,13 +37,11 @@ def handle_message_with_karma(client: WebClient, message):
     users = parse_karma_from_text(message.get("text"))
     users_without_current_user = [name for name in users if name != message["user"]]
     if users_without_current_user:
-        with get_connection() as cursor:
-            insert_karma(
-                cursor,
-                message["channel"],
-                message["ts"],
-                users_without_current_user,
-            )
+        Karma.give_karma(
+            message["channel"],
+            message["ts"],
+            users_without_current_user,
+        )
         client.reactions_add(
             channel=message["channel"], name="botko", timestamp=message["ts"]
         )
@@ -89,26 +57,22 @@ def handle_message_with_karma(client: WebClient, message):
 def handle_reaction_added(client: WebClient, event):
     logger.info("Received reaction_added event: %s", event)
     if event["reaction"] in KARMA_EMOJIS and event["item_user"] != event["user"]:
-        with get_connection() as cursor:
-            insert_karma(
-                cursor,
-                event["item"]["channel"],
-                event["item"]["ts"],
-                [event["item_user"]],
-            )
+        Karma.give_karma(
+            event["item"]["channel"],
+            event["item"]["ts"],
+            [event["item_user"]],
+        )
 
 
 @app.event("app_home_opened")
 def update_home_tab(client, event):
     logger.info("Loading home tab for user: %s", event["user"])
-    with get_connection() as cursor:
-        users = list(fetch_karma_leaderboard(cursor))
+    users = list(Karma.leaderboard())
     client.views_publish(
         user_id=event["user"],
         view={
             "type": "home",
             "callback_id": "home_view",
-            # body of the view
             "blocks": [
                 {
                     "type": "section",
@@ -138,39 +102,3 @@ def update_home_tab(client, event):
             ],
         },
     )
-
-
-app_handler = SlackRequestHandler(app)
-
-
-async def endpoint(req):
-    return await app_handler.handle(req)
-
-
-def heartbeat(_):
-    return PlainTextResponse("Hello 🤖")
-
-
-api = Starlette(
-    debug=os.environ.get("DEBUG", "") == "True",
-    routes=[
-        Route("/slack/events", endpoint=endpoint, methods=["POST"]),
-        Route("/", endpoint=heartbeat, methods=["GET"]),
-    ],
-)
-
-if sentry_dns := os.environ.get("SENTRY_DNS"):
-    import logging
-
-    import sentry_sdk
-    from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
-
-    logger = logging.getLogger("uvicorn.app")
-
-    logger.info("👩‍🚒 Setting up Sentry")
-
-    sentry_sdk.init(  # pylint: disable=abstract-class-instantiated
-        sentry_dns,
-        traces_sample_rate=0.1,
-    )
-    api = SentryAsgiMiddleware(api)

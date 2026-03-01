@@ -1,25 +1,16 @@
-import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from unittest.mock import Mock, create_autospec
 
 import pytest
 from slack_sdk.web.client import WebClient
 
-from app import handle_message_with_karma, say_hello, update_home_tab
-from db import get_connection, init_db
-from models import insert_karma
+from bot.models import Karma
+from bot.slack_app import handle_message_with_karma, say_hello, update_home_tab
 
 
 @pytest.fixture(name="client_mock")
 def fixture_client_mock():
     return create_autospec(WebClient)
-
-
-@pytest.fixture(autouse=True)
-def fixture_db_reset():
-    with get_connection() as connection:
-        init_db(connection)
-        connection.execute("delete from karma")
 
 
 @pytest.mark.parametrize(
@@ -30,6 +21,7 @@ def fixture_db_reset():
         "Amazing, <@U02RW93RGBX>++",
     ],
 )
+@pytest.mark.django_db
 def test_find_karma(client_mock, text):
     handle_message_with_karma(
         client_mock,
@@ -41,14 +33,14 @@ def test_find_karma(client_mock, text):
         ),
     )
 
-    with get_connection() as connection:
-        assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 1, text
+    assert Karma.objects.count() == 1, text
     client_mock.reactions_add.assert_called_with(
         channel="my_channel", name="botko", timestamp="123"
     )
     client_mock.chat_postMessage.assert_not_called()
 
 
+@pytest.mark.django_db
 def test_find_multiple_karma(client_mock):
     handle_message_with_karma(
         client_mock,
@@ -60,8 +52,7 @@ def test_find_multiple_karma(client_mock):
         ),
     )
 
-    with get_connection() as connection:
-        assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 2
+    assert Karma.objects.count() == 2
     client_mock.reactions_add.assert_called_with(
         channel="my_channel", name="botko", timestamp="123"
     )
@@ -76,6 +67,7 @@ def test_find_multiple_karma(client_mock):
         "++Hey there <@U02RW93RGBX>\xa0 thing++ <@U02RMSKJDH>\xa0 other thing++",
     ],
 )
+@pytest.mark.django_db
 def test_find_multiple_invalid_karma(client_mock, text):
     handle_message_with_karma(
         client_mock,
@@ -87,12 +79,12 @@ def test_find_multiple_invalid_karma(client_mock, text):
         ),
     )
 
-    with get_connection() as connection:
-        assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 0, text
+    assert Karma.objects.count() == 0, text
     client_mock.reactions_add.assert_not_called()
     client_mock.chat_postMessage.assert_not_called()
 
 
+@pytest.mark.django_db
 def test_self_karma(client_mock):
     handle_message_with_karma(
         client_mock,
@@ -104,8 +96,7 @@ def test_self_karma(client_mock):
         ),
     )
 
-    with get_connection() as connection:
-        assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 0
+    assert Karma.objects.count() == 0
     client_mock.reactions_add.assert_not_called()
     client_mock.chat_postMessage.assert_called_with(
         channel="my_channel",
@@ -114,6 +105,7 @@ def test_self_karma(client_mock):
     )
 
 
+@pytest.mark.django_db
 def test_self_karma_and_other_karma(client_mock):
     handle_message_with_karma(
         client_mock,
@@ -125,8 +117,7 @@ def test_self_karma_and_other_karma(client_mock):
         ),
     )
 
-    with get_connection() as connection:
-        assert connection.execute("SELECT COUNT(*) FROM karma").fetchone()[0] == 1
+    assert Karma.objects.count() == 1
     client_mock.reactions_add.assert_called_with(
         channel="my_channel", name="botko", timestamp="123"
     )
@@ -143,20 +134,19 @@ def test_say_hello():
     say_mock.assert_called_with("Hi there, <@123>!")
 
 
+@pytest.mark.django_db
 def test_update_home_tab(client_mock: Mock):
-    with get_connection() as connection:
-        insert_karma(
-            connection,
-            channel="C02SBSSCMR7",
-            ts=f"{time.time()-60*60*60*24*700}",
-            users=["U123123"],
-        )
-        insert_karma(
-            connection,
-            channel="C02SBSSCMR7",
-            ts=f"{time.time()}",
-            users=["U02RW93RGBX", "U02RW93RGBX", "U6LJ2A03A", "U6LJ2A03A", "U6LJ2A03A"],
-        )
+    now = datetime.now()
+    # Old karma — outside current year, should not appear
+    Karma.objects.create(
+        channel="C02SBSSCMR7",
+        ts="old",
+        user="U123123",
+        created_at=now - timedelta(days=700),
+    )
+    # Current year karma
+    Karma.give_karma("C02SBSSCMR7", "new", ["U02RW93RGBX", "U02RW93RGBX", "U6LJ2A03A", "U6LJ2A03A", "U6LJ2A03A"])
+
     update_home_tab(client=client_mock, event=dict(user="123"))
     client_mock.views_publish.assert_called()
     view = client_mock.views_publish.call_args.kwargs["view"]
