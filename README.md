@@ -25,9 +25,14 @@ Run tests:
 uv run ptw
 ```
 
+Run migrations:
+```
+uv run python manage.py migrate
+```
+
 Run server:
 ```
-uv run uvicorn app:api --log-level info --reload --port 3000
+uv run python manage.py runserver
 ```
 
 You'll need to set the `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET` `env` variables from https://api.slack.com/apps/
@@ -35,5 +40,5 @@ You'll need to set the `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET` `env` variab
 
 If you want Slack to be able to hit your server you'll also need to run `ngrok`:
 ```
-ngrok http 3000
+ngrok http 8000
 ```
