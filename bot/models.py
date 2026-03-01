@@ -10,9 +10,6 @@ class Karma(models.Model):
     emoji = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(default=datetime.now)
 
-    class Meta:
-        db_table = "karma"
-
     def __str__(self):
         return f"{self.user} in {self.channel}"
 
@@ -64,9 +61,6 @@ class Birthday(models.Model):
     user = models.TextField(unique=True)
     day = models.IntegerField()
     month = models.IntegerField()
-
-    class Meta:
-        db_table = "birthday"
 
     def __str__(self):
         return f"{self.user}: {self.day}/{self.month}"
