@@ -1,12 +1,18 @@
-import os
+from pathlib import Path
 
-from dotenv import load_dotenv
+import environ
 
-load_dotenv()
+env = environ.Env(
+    DEBUG=(bool, False),
+    SECRET_KEY=(str, "insecure-dev-key-change-me"),
+    DATABASE_URL=(str, "postgres://botko@localhost:5432/botko"),
+)
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "insecure-dev-key-change-me")
+environ.Env.read_env(Path(__file__).resolve().parent.parent / ".env", overwrite=True)
 
-DEBUG = os.environ.get("DEBUG", "") == "True"
+SECRET_KEY = env("SECRET_KEY")
+
+DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = ["*"]
 
@@ -31,21 +37,14 @@ ROOT_URLCONF = "botko.urls"
 WSGI_APPLICATION = "botko.wsgi.application"
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DATABASE_NAME", "botko"),
-        "USER": os.environ.get("DATABASE_USER", "botko"),
-        "PASSWORD": os.environ.get("DATABASE_PASSWORD", ""),
-        "HOST": os.environ.get("DATABASE_HOST", "localhost"),
-        "PORT": os.environ.get("DATABASE_PORT", "5432"),
-    }
+    "default": env.db(),
 }
 
 USE_TZ = False
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-if sentry_dns := os.environ.get("SENTRY_DNS"):
+if sentry_dns := env("SENTRY_DNS", default=""):
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
 

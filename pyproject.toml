@@ -8,7 +8,7 @@ dependencies = [
     "django",
     "gunicorn",
     "psycopg[binary]",
-    "python-dotenv",
+    "django-environ",
     "schedule",
     "sentry-sdk",
     "slack_bolt",
