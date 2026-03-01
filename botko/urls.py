@@ -1,12 +1,8 @@
-from django.http import HttpResponse
 from django.urls import include, path
 
-
-def heartbeat(request):
-    return HttpResponse("Hello 🤖")
-
+from bot.views import index
 
 urlpatterns = [
-    path("", heartbeat),
+    path("", index),
     path("slack/", include("bot.slack_urls")),
 ]

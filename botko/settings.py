@@ -18,6 +18,14 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
 ]
 
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+    },
+]
+
 ROOT_URLCONF = "botko.urls"
 
 WSGI_APPLICATION = "botko.wsgi.application"
