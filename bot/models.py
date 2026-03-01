@@ -28,7 +28,7 @@ class Karma(models.Model):
             )
             .values("user")
             .annotate(count=models.Count("id"))
-            .order_by("-count")
+            .order_by("-count", "user")
         )
 
     @classmethod
@@ -41,7 +41,7 @@ class Karma(models.Model):
             )
             .values("user")
             .annotate(count=models.Count("id"))
-            .order_by("-count")
+            .order_by("-count", "user")
         )
 
     @classmethod
@@ -53,7 +53,7 @@ class Karma(models.Model):
             )
             .values("user")
             .annotate(count=models.Count("id"))
-            .order_by("-count")
+            .order_by("-count", "user")
         )
 
 

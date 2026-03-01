@@ -83,19 +83,19 @@ def test_job_karma():
 
     assert (
         client_mock.chat_postMessage.call_args_list[0][1]["blocks"][3]["text"]["text"]
-        == "<@U123124> gained 2 karma."
-    )
-    assert (
-        client_mock.chat_postMessage.call_args_list[0][1]["blocks"][4]["text"]["text"]
         == "<@U123123> gained 2 karma."
     )
     assert (
+        client_mock.chat_postMessage.call_args_list[0][1]["blocks"][4]["text"]["text"]
+        == "<@U123124> gained 2 karma."
+    )
+    assert (
         client_mock.chat_postMessage.call_args_list[1][1]["blocks"][2]["text"]["text"]
-        == "<@U123124> gained 1 karma."
+        == "<@U123123> gained 1 karma."
     )
     assert (
         client_mock.chat_postMessage.call_args_list[1][1]["blocks"][3]["text"]["text"]
-        == "<@U123123> gained 1 karma."
+        == "<@U123124> gained 1 karma."
     )
 
 
