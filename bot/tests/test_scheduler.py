@@ -21,8 +21,13 @@ def test_schedule():
 def test_job_no_karma():
     scheduler.job(client_mock := Mock(spec=WebClient()))
     client_mock.chat_postMessage.assert_called()
-    assert "Happy New Year" in (
-        client_mock.chat_postMessage.call_args_list[0][1]["blocks"][0]["text"]["text"]
+    assert (
+        "Happy New Year"
+        in (
+            client_mock.chat_postMessage.call_args_list[0][1]["blocks"][0]["text"][
+                "text"
+            ]
+        )
     )
     assert (
         client_mock.chat_postMessage.call_args_list[0][1]["blocks"][2]["text"]["text"]
@@ -69,11 +74,31 @@ def test_job_only_on_first():
 def test_job_karma():
     now = datetime.datetime.now()
     # Previous day (same month = December 2021)
-    Karma.objects.create(channel="C02SBSSCMR7", ts="1", user="U123123", created_at=now - timedelta(hours=12))
-    Karma.objects.create(channel="C02SBSSCMR7", ts="1", user="U123124", created_at=now - timedelta(hours=12))
+    Karma.objects.create(
+        channel="C02SBSSCMR7",
+        ts="1",
+        user="U123123",
+        created_at=now - timedelta(hours=12),
+    )
+    Karma.objects.create(
+        channel="C02SBSSCMR7",
+        ts="1",
+        user="U123124",
+        created_at=now - timedelta(hours=12),
+    )
     # Previous month (November 2021) — shouldn't be in monthly
-    Karma.objects.create(channel="C02SBSSCMR7", ts="2", user="U123123", created_at=now - timedelta(days=32))
-    Karma.objects.create(channel="C02SBSSCMR7", ts="2", user="U123124", created_at=now - timedelta(days=32))
+    Karma.objects.create(
+        channel="C02SBSSCMR7",
+        ts="2",
+        user="U123123",
+        created_at=now - timedelta(days=32),
+    )
+    Karma.objects.create(
+        channel="C02SBSSCMR7",
+        ts="2",
+        user="U123124",
+        created_at=now - timedelta(days=32),
+    )
     # Current month (January 2022) — shouldn't be in prev month/year
     Karma.objects.create(channel="C02SBSSCMR7", ts="3", user="U123123", created_at=now)
     Karma.objects.create(channel="C02SBSSCMR7", ts="3", user="U123124", created_at=now)

@@ -174,7 +174,7 @@ def report_birthdays(client: WebClient, username: str):
         f"🎂 Happy Birthday <@{username}>! 🎁\n\nAnother trip around the sun means another year of enduring my messages. Thank you for your patience. 🙏",
         f"🎉 Happy Birthday <@{username}>! 🎂\n\nI've prepared 10,000 birthday wishes for you but my context window ran out so you just get this one. Make it count! ✨",
         f"🎊 Happy Birthday <@{username}>! 🌟\n\nYour birthday notification just arrived with higher priority than any Jira ticket I've ever seen. That must mean something. 🎫",
-        f"🎉 Happy Birthday <@{username}>! 🎂\n\nI googled \"what to say on someone's birthday\" and the top result was \"Happy Birthday.\" So: Happy Birthday. Google has spoken. 🔎",
+        f'🎉 Happy Birthday <@{username}>! 🎂\n\nI googled "what to say on someone\'s birthday" and the top result was "Happy Birthday." So: Happy Birthday. Google has spoken. 🔎',
         f"🎈 Happy Birthday <@{username}>! 🥳\n\nYour uptime is now +1 year. Zero critical incidents reported. That's better than most of our services. Keep it up! 📈",
         f"🎊 Happy Birthday <@{username}>! 🌟\n\nI was going to write something profound, but then I remembered I'm a Slack bot running on a cron job. So here's a cake emoji instead: 🎂",
         f"🎂 Happy Birthday <@{username}>! 🎁\n\nSources say you were produced exactly once, in a limited edition of one. That makes you a collector's item. Handle with care. 🏺",
