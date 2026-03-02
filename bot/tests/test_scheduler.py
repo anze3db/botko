@@ -12,7 +12,8 @@ from bot.models import Birthday, Karma
 
 def test_schedule():
     assert [(job.at_time, job.interval) for job in scheduler.schedule.get_jobs()] == [
-        (datetime.time(10, 0), 1)
+        (datetime.time(10, 0), 1),
+        (None, 1),
     ]
 
 
