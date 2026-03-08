@@ -49,8 +49,11 @@ if sentry_dns := env("SENTRY_DNS", default=""):
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
 
+    from django.core.exceptions import DisallowedHost
+
     sentry_sdk.init(
         sentry_dns,
         integrations=[DjangoIntegration()],
         traces_sample_rate=0.1,
+        ignore_errors=[DisallowedHost],
     )
