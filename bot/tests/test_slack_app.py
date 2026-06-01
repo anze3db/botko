@@ -4,8 +4,14 @@ from unittest.mock import Mock, create_autospec
 import pytest
 from slack_sdk.web.client import WebClient
 
-from bot.models import Karma
-from bot.slack_app import handle_message_with_karma, say_hello, update_home_tab
+from bot.models import Channel, Karma, Message, SlackUser
+from bot.slack_app import (
+    _log_message,
+    handle_message_with_karma,
+    handle_reaction_added,
+    say_hello,
+    update_home_tab,
+)
 
 
 @pytest.fixture(name="client_mock")
@@ -159,3 +165,97 @@ def test_update_home_tab(client_mock: Mock):
     assert "<@U6LJ2A03A> has 3 karma." in str(view["blocks"])
     assert "<@U02RW93RGBX> has 2 karma." in str(view["blocks"])
     assert "<@U123123> has 1 karma." not in str(view["blocks"])
+
+
+@pytest.mark.django_db
+def test_karma_stores_giver(client_mock):
+    handle_message_with_karma(
+        client_mock,
+        dict(
+            text="<@U02RW93RGBX>++",
+            channel="my_channel",
+            ts="123",
+            user="UGIVER",
+        ),
+    )
+    karma = Karma.objects.first()
+    assert karma.giver is not None
+    assert karma.giver.slack_id == "UGIVER"
+    assert karma.receiver is not None
+    assert karma.receiver.slack_id == "U02RW93RGBX"
+
+
+@pytest.mark.django_db
+def test_reaction_stores_giver(client_mock):
+    handle_reaction_added(
+        client_mock,
+        {
+            "reaction": "thumbsup_all",
+            "user": "UGIVER",
+            "item_user": "URECEIVER",
+            "item": {"channel": "C123", "ts": "456"},
+        },
+    )
+    karma = Karma.objects.first()
+    assert karma.giver.slack_id == "UGIVER"
+    assert karma.receiver.slack_id == "URECEIVER"
+    assert karma.emoji == "thumbsup_all"
+
+
+@pytest.mark.django_db
+def test_karma_message_logs_message(client_mock):
+    handle_message_with_karma(
+        client_mock,
+        dict(
+            text="<@URECEIVER>++",
+            channel="C123",
+            ts="789",
+            user="UGIVER",
+        ),
+    )
+    assert Message.objects.count() == 1
+    msg = Message.objects.first()
+    assert msg.text == "<@URECEIVER>++"
+    assert msg.user.slack_id == "UGIVER"
+    assert msg.channel.slack_id == "C123"
+
+
+@pytest.mark.django_db
+def test_log_message_creates_records():
+    event = {"user": "U123", "channel": "C456", "ts": "1.0", "text": "hello world"}
+    _log_message(event)
+    assert Message.objects.count() == 1
+    assert SlackUser.objects.filter(slack_id="U123").exists()
+    assert Channel.objects.filter(slack_id="C456").exists()
+    msg = Message.objects.first()
+    assert msg.text == "hello world"
+
+
+@pytest.mark.django_db
+def test_log_message_idempotent():
+    event = {"user": "U123", "channel": "C456", "ts": "1.0", "text": "hello"}
+    _log_message(event)
+    _log_message(event)
+    assert Message.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_log_message_missing_user():
+    event = {"channel": "C456", "ts": "1.0", "text": "hello"}
+    result = _log_message(event)
+    assert result is None
+    assert Message.objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_log_message_with_thread():
+    event = {
+        "user": "U123",
+        "channel": "C456",
+        "ts": "1.0",
+        "text": "reply",
+        "thread_ts": "0.5",
+    }
+    _log_message(event)
+    msg = Message.objects.first()
+    assert msg.thread_ts == "0.5"

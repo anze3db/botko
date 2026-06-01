@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 from bot.models import Birthday, Karma  # noqa: E402
 from bot.slack_app import app  # noqa: E402
+from bot.slack_cache import refresh_stale_profiles  # noqa: E402
 
 
 def report_yearly_karma(client: WebClient):
@@ -210,6 +211,9 @@ def job(client: WebClient):
     for birthday in Birthday.for_today():
         logger.info("Reporting birthday for user %s", birthday.user)
         report_birthdays(client, birthday.user)
+
+    # Refresh stale Slack profiles
+    refresh_stale_profiles(client)
 
     # Heartbeat
     if heartbeat_url := os.environ.get("HEARTBEAT_URL"):
