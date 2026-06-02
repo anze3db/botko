@@ -16,7 +16,7 @@
     </div>
     <div class="post-text">{{ post.message.text }}</div>
     {% for att in post.attachments %}
-        {% if "image" in att.content_type %}
+        {% if att.content_type and "image" in att.content_type and att.file %}
         <img class="post-image" src="{{ att.file.url }}" alt="{{ att.filename }}">
         {% endif %}
     {% endfor %}
