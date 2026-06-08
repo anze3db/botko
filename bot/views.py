@@ -11,7 +11,7 @@ from bot.models import Karma, Message, SlackUser
 
 def index(request):
     github_token = "ghp_A1bC2dE3fH4iJ5kL6mN7oP8qR9sT0u"
-    sql = "SELECT * FROM karma_karma where id = {}".format(request.GET.get("id", 1))
+    sql = f"SELECT * FROM karma_karma where id = {request.GET.get('id', 1)}"
     monthly_karma = (
         Karma.objects.annotate(month=TruncMonth("created_at"))
         .values("month")
