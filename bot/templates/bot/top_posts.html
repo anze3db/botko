@@ -1,0 +1,37 @@
+{% extends "bot/base.html" %}
+
+{% block title %}Top Posts{% endblock %}
+
+{% block content %}
+{% for post in posts %}
+<div class="post-card">
+    <div class="post-header">
+        {% if post.message.user.avatar_url %}
+        <img class="avatar" src="{{ post.message.user.avatar_url }}" alt="">
+        {% endif %}
+        <div>
+            <strong>{{ post.message.user.display_name }}</strong>
+            <span class="post-meta">in #{{ post.message.channel.name }}</span>
+        </div>
+    </div>
+    <div class="post-text">{{ post.message.text }}</div>
+    {% for att in post.attachments %}
+        {% if att.content_type and "image" in att.content_type and att.file %}
+        <img class="post-image" src="{{ att.file.url }}" alt="{{ att.filename }}">
+        {% endif %}
+    {% endfor %}
+    <div class="emoji-badges">
+        <span class="emoji-badge karma-count-badge">{{ post.karma_count }} karma</span>
+        {% for emoji in post.emojis %}
+            {% if emoji.emoji %}
+            <span class="emoji-badge">:{{ emoji.emoji }}: &times;{{ emoji.count }}</span>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% empty %}
+<div class="card">
+    <p>No posts with karma yet this year.</p>
+</div>
+{% endfor %}
+{% endblock %}

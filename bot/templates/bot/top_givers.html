@@ -1,0 +1,30 @@
+{% extends "bot/base.html" %}
+
+{% block title %}Top Givers{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>{{ year }} Top Karma Givers</h2>
+    <table>
+        <thead>
+            <tr><th class="rank">#</th><th>User</th><th>Given</th></tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+        <tr>
+            <td class="rank">{{ forloop.counter }}</td>
+            <td>
+                <div class="user-cell">
+                    {% if user.avatar_url %}<img class="avatar" src="{{ user.avatar_url }}" alt="">{% endif %}
+                    {{ user.display_name }}
+                </div>
+            </td>
+            <td class="count">{{ user.count }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">No karma given yet this year.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
