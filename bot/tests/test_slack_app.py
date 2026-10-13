@@ -151,7 +151,8 @@ def test_update_home_tab(client_mock: Mock):
         ["U02RW93RGBX", "U02RW93RGBX", "U6LJ2A03A", "U6LJ2A03A", "U6LJ2A03A"],
     )
 
-    update_home_tab(client=client_mock, event=dict(user="123"))
+    # slack_bolt types @app.event(...) as returning an Optional callable.
+    update_home_tab(client=client_mock, event=dict(user="123"))  # type: ignore[misc]
     client_mock.views_publish.assert_called()
     view = client_mock.views_publish.call_args.kwargs["view"]
     assert view["type"] == "home"

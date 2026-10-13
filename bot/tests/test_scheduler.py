@@ -1,20 +1,50 @@
 import datetime
 from datetime import timedelta
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
+from zoneinfo import ZoneInfo
 
 import freezegun
 import pytest
+from potatoq import current_app
+from potatoq.testing import drain, due, tick
 from slack_sdk.web.client import WebClient
 
-import scheduler
+from bot import tasks as scheduler
 from bot.models import Birthday, Karma
+from bot.slack_app import app as slack_app
 
 
 def test_schedule():
-    assert [(job.at_time, job.interval) for job in scheduler.schedule.get_jobs()] == [
-        (datetime.time(10, 0), 1),
-        (None, 1),
+    assert current_app().conf.timezone == "Europe/Lisbon"
+    assert "bot.tasks.daily_report" in current_app().tasks
+    # 10:00 local time all year round, DST included (naive datetimes are in Lisbon time).
+    tz = ZoneInfo("Europe/Lisbon")
+    start = datetime.datetime(2026, 3, 28, 12, 0)
+    assert due(current_app(), start, start + timedelta(days=2)) == [
+        (
+            "daily-report",
+            datetime.datetime(2026, 3, 29, 10, 0, tzinfo=tz),
+        ),  # summer time
+        ("daily-report", datetime.datetime(2026, 3, 30, 10, 0, tzinfo=tz)),
     ]
+
+
+def test_process_timezone():
+    assert datetime.datetime.now().astimezone().tzname() == "UTC"
+
+
+# transaction=True: the broker is the database, and drain() reads the queue on its own
+# connection, so it can't see tasks enqueued inside the test's transaction.
+@pytest.mark.django_db(transaction=True)
+def test_daily_report_runs_at_10():
+    app = current_app()
+    assert tick(app, at=datetime.datetime(2026, 10, 9, 9, 59, 30)) == []
+    assert tick(app, at=datetime.datetime(2026, 10, 9, 10, 0, 1)) == ["daily-report"]
+
+    with patch("bot.tasks.job", autospec=True) as job_mock:
+        [task] = drain(app)
+    assert (task.name, task.state) == ("bot.tasks.daily_report", "SUCCESS")
+    job_mock.assert_called_once_with(slack_app.client)
 
 
 @freezegun.freeze_time("2022-01-01 10:00:00")

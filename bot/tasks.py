@@ -1,26 +1,16 @@
 import logging
 import os
 import random
-import time
 from datetime import datetime, timedelta
 
-import django
-import schedule
+from potatoq import shared_task
 from slack_sdk.web.client import WebClient
 from urllib3 import PoolManager, Retry
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "botko.settings")
+from bot.models import Birthday, Karma
+from bot.slack_app import app
 
-
-django.setup()
-
-
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-
-from bot.models import Birthday, Karma  # noqa: E402
-from bot.slack_app import app  # noqa: E402
 
 
 def report_yearly_karma(client: WebClient):
@@ -220,18 +210,7 @@ def job(client: WebClient):
     logger.info("Daily job finished at %s", datetime.now().isoformat())
 
 
-def job_wrapper():
+@shared_task
+def daily_report():
+    """Scheduled by POTATOQ["beat_schedule"] in botko/settings.py."""
     job(app.client)
-
-
-def test_schedule():
-    logger.info("Scheduler Working!")
-
-
-schedule.every().day.at("10:00").do(job_wrapper)
-schedule.every().hour.do(test_schedule)
-if __name__ == "__main__":
-    logger.info("Starting scheduler")
-    while True:
-        schedule.run_pending()
-        time.sleep(1)

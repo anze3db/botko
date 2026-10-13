@@ -18,7 +18,7 @@ import django
 
 django.setup()
 
-from bot.models import Birthday, Karma
+from bot.models import Birthday, Karma  # noqa: E402
 
 
 def migrate(sqlite_path: str):
@@ -31,7 +31,7 @@ def migrate(sqlite_path: str):
     for row in rows:
         try:
             created_at = datetime.fromtimestamp(float(row["ts"]))
-        except (ValueError, OSError):
+        except ValueError, OSError:
             created_at = datetime.now()
         karma_objects.append(
             Karma(

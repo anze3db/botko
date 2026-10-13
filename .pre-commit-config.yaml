@@ -12,3 +12,4 @@ repos:
     rev: 'v1.20.0'
     hooks:
       - id: mypy
+        exclude: /migrations/

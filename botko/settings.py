@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import environ
+from potatoq.schedules import crontab
 
 env = environ.Env(
     DEBUG=(bool, False),
@@ -19,6 +20,7 @@ ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 
 INSTALLED_APPS = [
     "bot",
+    "potatoq.contrib.django",
 ]
 
 MIDDLEWARE = [
@@ -42,6 +44,22 @@ DATABASES = {
 }
 
 USE_TZ = False
+# Django exports TIME_ZONE as the process's TZ, so it decides what datetime.now() returns.
+# Without it Django falls back to "America/Chicago".
+TIME_ZONE = "UTC"
+
+# The default database is the broker. Every worker also runs the beat schedule.
+POTATOQ = {
+    "worker_concurrency": 1,
+    "timezone": "Europe/Lisbon",  # crontabs below fire in this zone
+    "beat_schedule": {
+        # Monthly/yearly karma reports, birthday wishes and the heartbeat ping.
+        "daily-report": {
+            "task": "bot.tasks.daily_report",
+            "schedule": crontab(hour=10, minute=0),
+        },
+    },
+}
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

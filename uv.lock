@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.14"
 resolution-markers = [
     "python_full_version >= '3.15'",
@@ -66,12 +66,12 @@ dependencies = [
     { name = "freezegun" },
     { name = "gunicorn" },
     { name = "mypy" },
+    { name = "potatoq", extra = ["postgres"] },
     { name = "psycopg", extra = ["binary"] },
     { name = "pytest" },
     { name = "pytest-django" },
     { name = "pytest-watcher" },
     { name = "ruff" },
-    { name = "schedule" },
     { name = "sentry-sdk" },
     { name = "slack-bolt" },
     { name = "urllib3" },
@@ -84,12 +84,12 @@ requires-dist = [
     { name = "freezegun" },
     { name = "gunicorn" },
     { name = "mypy" },
+    { name = "potatoq", extras = ["postgres"], specifier = "==26.1a2" },
     { name = "psycopg", extras = ["binary"] },
     { name = "pytest" },
     { name = "pytest-django" },
     { name = "pytest-watcher" },
     { name = "ruff" },
-    { name = "schedule" },
     { name = "sentry-sdk" },
     { name = "slack-bolt" },
     { name = "urllib3" },
@@ -271,6 +271,20 @@ wheels = [
 ]
 
 [[package]]
+name = "potatoq"
+version = "26.1a2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/60/f2/925872e96eb08f46da8c4e8c03a158693ed75aeb8f673afac46ea2e07427/potatoq-26.1a2.tar.gz", hash = "sha256:e54af21cabcd946a3530eda0594a2d0dc1d9e730b2c660e6d6ecd7d0c57478a1", size = 127732, upload-time = "2026-10-09T15:40:54.1Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0f/52/8ced20c328befcec2f310af47d441fe462effab814bf7373dfdcb331e380/potatoq-26.1a2-py3-none-any.whl", hash = "sha256:17cc09e14981593d490b06b9a20f684928747ac798ced327748a9ed3dba16208", size = 149921, upload-time = "2026-10-09T15:40:52.434Z" },
+]
+
+[package.optional-dependencies]
+postgres = [
+    { name = "psycopg", extra = ["binary"] },
+]
+
+[[package]]
 name = "psycopg"
 version = "3.3.4"
 source = { registry = "https://pypi.org/simple" }
@@ -389,15 +403,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/10/9b/5f14927848d2fd4aa891fd88d883788c5a7baba561c7874732364045708c/ruff-0.15.20-py3-none-win32.whl", hash = "sha256:ed65ef510e43a137207e0f01cfcf998aeddb1aeeda5c9d35023e910284d7cf21", size = 10857322, upload-time = "2026-06-25T17:20:28.612Z" },
     { url = "https://files.pythonhosted.org/packages/fa/f0/fe47c501f9dea92a26d788ff98bb5d92ed4cb4c88792c5c88af6b697dc8e/ruff-0.15.20-py3-none-win_amd64.whl", hash = "sha256:a525c81c70fb0380344dd1d8745d8cc1c890b7fc94a58d5a07bd8eb9557b8415", size = 11993274, upload-time = "2026-06-25T17:20:31.871Z" },
     { url = "https://files.pythonhosted.org/packages/d7/2b/9555445e1201d92b3195f45cdb153a0b68f24e0a4273f6e3d5ab46e212bb/ruff-0.15.20-py3-none-win_arm64.whl", hash = "sha256:2f5b2a6d614e8700388806a14996c40fab2c47b819ef57d790a34878858ed9ca", size = 11343498, upload-time = "2026-06-25T17:20:35.03Z" },
-]
-
-[[package]]
-name = "schedule"
-version = "1.2.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/0c/91/b525790063015759f34447d4cf9d2ccb52cdee0f1dd6ff8764e863bcb74c/schedule-1.2.2.tar.gz", hash = "sha256:15fe9c75fe5fd9b9627f3f19cc0ef1420508f9f9a46f45cd0769ef75ede5f0b7", size = 26452, upload-time = "2024-06-18T20:03:14.633Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/20/a7/84c96b61fd13205f2cafbe263cdb2745965974bdf3e0078f121dfeca5f02/schedule-1.2.2-py3-none-any.whl", hash = "sha256:5bef4a2a0183abf44046ae0d164cadcac21b1db011bdd8102e4a0c1e91e06a7d", size = 12220, upload-time = "2024-05-25T18:41:59.121Z" },
 ]
 
 [[package]]
