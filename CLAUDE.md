@@ -49,7 +49,7 @@ Single Django app: `bot/`
 ## Key Patterns
 
 - Database access uses Django ORM (models in `bot/models.py`)
-- Tests use in-memory SQLite (`TESTING=true` env var) and `freezegun` for time-dependent logic
+- Tests run against Postgres (`DATABASE_URL`, a `postgres:18` service in CI) and use `freezegun` for time-dependent logic
 - Tests use `@pytest.mark.django_db` decorator for database access
 - Slack API calls are mocked with `autospec=True` in tests
 - Karma cannot be self-assigned (enforced in `bot/slack_app.py`)
