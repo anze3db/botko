@@ -1,5 +1,4 @@
 #!/bin/bash
 set -e
-pushd "$(dirname "$0")/.."
-uv run --locked python manage.py potatoq worker
-popd
+cd "$(dirname "$0")/.."
+exec uv run --locked python manage.py potatoq worker
