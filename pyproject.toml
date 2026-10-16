@@ -9,7 +9,7 @@ dependencies = [
     "gunicorn",
     "psycopg[binary]",
     "django-environ",
-    "potatoq[postgres]>=26.1a4",
+    "potatoq[postgres]>=26.1a5",
     "sentry-sdk",
     "slack_bolt",
     "urllib3",
