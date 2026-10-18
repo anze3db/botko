@@ -29,7 +29,7 @@ uv run python manage.py runserver 3000
 uv run python manage.py potatoq worker
 ```
 
-Package manager is **uv** (not pip/pipenv). Python 3.14+.
+Package manager is **uv** (not pip/pipenv). Python 3.15+.
 
 ## Architecture
 
