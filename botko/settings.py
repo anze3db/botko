@@ -65,9 +65,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 if sentry_dns := env("SENTRY_DNS", default=""):
     import sentry_sdk
-    from sentry_sdk.integrations.django import DjangoIntegration
-
     from django.core.exceptions import DisallowedHost
+    from sentry_sdk.integrations.django import DjangoIntegration
 
     sentry_sdk.init(
         sentry_dns,

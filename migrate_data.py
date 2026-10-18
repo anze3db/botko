@@ -18,7 +18,7 @@ import django
 
 django.setup()
 
-from bot.models import Birthday, Karma  # noqa: E402
+from bot.models import Birthday, Karma
 
 
 def migrate(sqlite_path: str):

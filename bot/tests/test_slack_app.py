@@ -25,12 +25,12 @@ def fixture_client_mock():
 def test_find_karma(client_mock, text):
     handle_message_with_karma(
         client_mock,
-        dict(
-            text=text,
-            channel="my_channel",
-            ts="123",
-            user="U2RMSKJDH",
-        ),
+        {
+            "text": text,
+            "channel": "my_channel",
+            "ts": "123",
+            "user": "U2RMSKJDH",
+        },
     )
 
     assert Karma.objects.count() == 1, text
@@ -44,12 +44,12 @@ def test_find_karma(client_mock, text):
 def test_find_multiple_karma(client_mock):
     handle_message_with_karma(
         client_mock,
-        dict(
-            text="Hey there <@U02RW93RGBX>\xa0++ <@U02RMSKJDH>\xa0++",
-            channel="my_channel",
-            ts="123",
-            user="U2RMSKJDH",
-        ),
+        {
+            "text": "Hey there <@U02RW93RGBX>\xa0++ <@U02RMSKJDH>\xa0++",
+            "channel": "my_channel",
+            "ts": "123",
+            "user": "U2RMSKJDH",
+        },
     )
 
     assert Karma.objects.count() == 2
@@ -71,12 +71,12 @@ def test_find_multiple_karma(client_mock):
 def test_find_multiple_invalid_karma(client_mock, text):
     handle_message_with_karma(
         client_mock,
-        dict(
-            text=text,
-            channel="my_channel",
-            ts="123",
-            user="U2RMSKJDH",
-        ),
+        {
+            "text": text,
+            "channel": "my_channel",
+            "ts": "123",
+            "user": "U2RMSKJDH",
+        },
     )
 
     assert Karma.objects.count() == 0, text
@@ -88,12 +88,12 @@ def test_find_multiple_invalid_karma(client_mock, text):
 def test_self_karma(client_mock):
     handle_message_with_karma(
         client_mock,
-        dict(
-            text="I am giving <@U02RMSKJDH>++",
-            channel="my_channel",
-            ts="123",
-            user="U02RMSKJDH",
-        ),
+        {
+            "text": "I am giving <@U02RMSKJDH>++",
+            "channel": "my_channel",
+            "ts": "123",
+            "user": "U02RMSKJDH",
+        },
     )
 
     assert Karma.objects.count() == 0
@@ -109,12 +109,12 @@ def test_self_karma(client_mock):
 def test_self_karma_and_other_karma(client_mock):
     handle_message_with_karma(
         client_mock,
-        dict(
-            text="I am giving <@U02RMSKJDH>++ <@UOTHRUSR>++ ",
-            channel="my_channel",
-            ts="123",
-            user="U02RMSKJDH",
-        ),
+        {
+            "text": "I am giving <@U02RMSKJDH>++ <@UOTHRUSR>++ ",
+            "channel": "my_channel",
+            "ts": "123",
+            "user": "U02RMSKJDH",
+        },
     )
 
     assert Karma.objects.count() == 1
@@ -130,7 +130,7 @@ def test_self_karma_and_other_karma(client_mock):
 
 def test_say_hello():
     say_mock = Mock()
-    say_hello(dict(user="123"), say_mock)
+    say_hello({"user": "123"}, say_mock)
     say_mock.assert_called_with("Hi there, <@123>!")
 
 
@@ -152,7 +152,7 @@ def test_update_home_tab(client_mock: Mock):
     )
 
     # slack_bolt types @app.event(...) as returning an Optional callable.
-    update_home_tab(client=client_mock, event=dict(user="123"))  # type: ignore[misc]
+    update_home_tab(client=client_mock, event={"user": "123"})  # type: ignore[misc]
     client_mock.views_publish.assert_called()
     view = client_mock.views_publish.call_args.kwargs["view"]
     assert view["type"] == "home"
