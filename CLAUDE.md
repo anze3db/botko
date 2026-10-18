@@ -8,6 +8,8 @@ Botko is a Slack bot (spiritual successor to [psywerx/botko](https://github.com/
 
 ## Commands
 
+`just` lists the development tasks in the `Justfile`; `just check` (lint, format check, mypy, tests) is the full check.
+
 ```bash
 # Setup
 cp .env.example .env
