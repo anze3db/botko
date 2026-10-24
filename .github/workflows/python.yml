@@ -50,3 +50,17 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         script: |
           bash projects/botko/.deploy/update.sh
+    - uses: actions/checkout@v4
+      with:
+        # The release's commits resolve the Sentry issues they name ("Fixes BOTKO-123")
+        fetch-depth: 0
+    - name: Create Sentry release
+      uses: getsentry/action-release@v3
+      env:
+        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        SENTRY_ORG: anze3db
+        SENTRY_PROJECT: botko
+      with:
+        environment: production
+        # update.sh deploys with git pull, so the SDK reports the deployed commit's SHA as its release
+        release: ${{ github.sha }}
