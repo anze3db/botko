@@ -1,6 +1,5 @@
 # Botko 🤖
 
-[![Upgrade dependencies](https://github.com/anze3db/botko/actions/workflows/upgrade-dependencies.yml/badge.svg?branch=main&event=schedule)](https://github.com/anze3db/botko/actions/workflows/upgrade-dependencies.yml)
 [![Test & Deploy](https://github.com/anze3db/botko/actions/workflows/python.yml/badge.svg)](https://github.com/anze3db/botko/actions/workflows/python.yml)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 
