@@ -15,7 +15,7 @@
         </div>
     </div>
     <div class="post-text">{{ post.message.text }}</div>
-    {% for att in post.attachments %}
+    {% for att in post.message.attachments.all %}
         {% if att.content_type and "image" in att.content_type and att.file %}
         <img class="post-image" src="{{ att.file.url }}" alt="{{ att.filename }}">
         {% endif %}
@@ -23,9 +23,7 @@
     <div class="emoji-badges">
         <span class="emoji-badge karma-count-badge">{{ post.karma_count }} karma</span>
         {% for emoji in post.emojis %}
-            {% if emoji.emoji %}
             <span class="emoji-badge">:{{ emoji.emoji }}: &times;{{ emoji.count }}</span>
-            {% endif %}
         {% endfor %}
     </div>
 </div>

@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime, timedelta
 
 from django.db import models
@@ -181,24 +182,58 @@ class Karma(models.Model):
         )
 
     @classmethod
-    def giver_leaderboard(cls):
+    def receiver_leaderboard(cls, limit=50):
+        return cls._people_leaderboard("receiver", limit)
+
+    @classmethod
+    def giver_leaderboard(cls, limit=50):
+        return cls._people_leaderboard("giver", limit)
+
+    @classmethod
+    def _people_leaderboard(cls, person: str, limit: int):
         year = datetime.now().year
         return (
-            cls.objects.filter(created_at__year=year, giver__isnull=False)
-            .values("giver__slack_id", "giver__display_name", "giver__avatar_url")
+            cls.objects.filter(created_at__year=year, **{f"{person}__isnull": False})
+            .values(
+                slack_id=models.F(f"{person}__slack_id"),
+                display_name=models.F(f"{person}__display_name"),
+                avatar_url=models.F(f"{person}__avatar_url"),
+            )
             .annotate(count=models.Count("id"))
-            .order_by("-count")
+            .order_by("-count", "display_name")[:limit]
         )
 
     @classmethod
-    def top_messages(cls, limit=20):
+    def top_messages(cls, limit=30):
         year = datetime.now().year
-        return (
-            cls.objects.filter(created_at__year=year, message__isnull=False)
-            .values("message__id")
+        this_year = cls.objects.filter(created_at__year=year, message__isnull=False)
+        counts = list(
+            this_year.values("message_id")
             .annotate(karma_count=models.Count("id"))
-            .order_by("-karma_count")[:limit]
+            .order_by("-karma_count", "message_id")[:limit]
         )
+        message_ids = [row["message_id"] for row in counts]
+        messages = (
+            Message.objects.select_related("user", "channel")
+            .prefetch_related("attachments")
+            .in_bulk(message_ids)
+        )
+        emojis = defaultdict(list)
+        for row in (
+            this_year.filter(message_id__in=message_ids, emoji__isnull=False)
+            .values("message_id", "emoji")
+            .annotate(count=models.Count("id"))
+            .order_by("-count", "emoji")
+        ):
+            emojis[row["message_id"]].append(row)
+        return [
+            {
+                "message": messages[row["message_id"]],
+                "karma_count": row["karma_count"],
+                "emojis": emojis[row["message_id"]],
+            }
+            for row in counts
+        ]
 
 
 class Birthday(models.Model):

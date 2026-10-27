@@ -111,7 +111,16 @@ def test_giver_leaderboard():
         Karma.objects.create(channel="C1", ts=f"t{i}", user="URECEIVER", giver=giver)
     lb = list(Karma.giver_leaderboard())
     assert lb[0]["count"] == 5
-    assert lb[0]["giver__slack_id"] == "UGIVER"
+    assert lb[0]["slack_id"] == "UGIVER"
+    assert lb[0]["display_name"] == "Giver"
+
+
+@pytest.mark.django_db
+def test_receiver_leaderboard():
+    Karma.give_karma("C1", "t1", ["UA", "UB"], giver_slack_id="UGIVER")
+    Karma.give_karma("C1", "t2", ["UB"], giver_slack_id="UGIVER")
+    lb = list(Karma.receiver_leaderboard())
+    assert [(row["slack_id"], row["count"]) for row in lb] == [("UB", 2), ("UA", 1)]
 
 
 @pytest.mark.django_db
@@ -123,3 +132,20 @@ def test_top_messages():
         Karma.objects.create(channel="C1", ts="1", user="U1", message=msg)
     top = list(Karma.top_messages(limit=10))
     assert top[0]["karma_count"] == 3
+
+
+@pytest.mark.django_db
+def test_top_messages_queries(django_assert_num_queries):
+    user = SlackUser.objects.create(slack_id="U1")
+    channel = Channel.objects.create(slack_id="C1")
+    for ts in ("1", "2", "3"):
+        msg = Message.objects.create(channel=channel, user=user, ts=ts)
+        Karma.objects.create(channel="C1", ts=ts, user="U1", message=msg)
+        Karma.objects.create(channel="C1", ts=ts, user="U1", message=msg, emoji="fire")
+    # Counts, messages, their attachments and the emoji breakdown
+    with django_assert_num_queries(4):
+        top = Karma.top_messages()
+    assert [post["karma_count"] for post in top] == [2, 2, 2]
+    assert top[0]["emojis"] == [
+        {"message_id": top[0]["message"].id, "emoji": "fire", "count": 1}
+    ]
