@@ -3,6 +3,8 @@ from pathlib import Path
 import environ
 from potatoq.schedules import crontab
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 env = environ.Env(
     DEBUG=(bool, False),
     SECRET_KEY=(str, "insecure-dev-key-change-me"),
@@ -60,6 +62,9 @@ POTATOQ = {
         },
     },
 }
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
