@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 
+from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.db.models.functions import TruncMonth
 from django.shortcuts import render
@@ -39,6 +40,7 @@ def index(request):
     )
 
 
+@login_required
 def top_receivers(request):
     return render(
         request,
@@ -47,6 +49,7 @@ def top_receivers(request):
     )
 
 
+@login_required
 def top_givers(request):
     return render(
         request,
@@ -55,6 +58,7 @@ def top_givers(request):
     )
 
 
+@login_required
 def top_posts(request):
     return render(
         request,

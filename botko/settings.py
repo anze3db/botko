@@ -22,11 +22,18 @@ ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 
 INSTALLED_APPS = [
     "bot",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
     "potatoq.contrib.django",
 ]
 
 MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
 ]
 
 TEMPLATES = [
@@ -34,12 +41,29 @@ TEMPLATES = [
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [],
         "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+            ],
+        },
     },
 ]
 
 ROOT_URLCONF = "botko.urls"
 
 WSGI_APPLICATION = "botko.wsgi.application"
+
+# Only the karma chart is public. The leaderboards and message pages need an account,
+# created with `manage.py createsuperuser`.
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "top_posts"
+LOGOUT_REDIRECT_URL = "/"
+
+# nginx terminates TLS and passes the scheme on, which the login form's CSRF check needs
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 
 DATABASES = {
     "default": env.db(),

@@ -44,9 +44,55 @@
             font-size: 0.95rem;
             transition: background 0.2s, color 0.2s;
         }
-        nav a:hover, nav a.active {
+        nav a:hover, nav a.active, nav button:hover {
             color: #fff;
             background: #16213e;
+        }
+        nav button {
+            color: #888;
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font: inherit;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .login-form {
+            max-width: 360px;
+            margin: 0 auto;
+        }
+        .login-form label {
+            display: block;
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+        }
+        .login-form input {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #1a1a2e;
+            color: #e0e0e0;
+            font: inherit;
+        }
+        .login-form button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(99, 102, 241, 0.8);
+            color: #fff;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .form-error {
+            color: rgba(244, 114, 182, 0.9);
+            margin-bottom: 16px;
         }
         .card {
             background: #16213e;
@@ -149,9 +195,17 @@
         <h1>Botko Karma</h1>
         <nav>
             <a href="/" {% if request.path == "/" %}class="active"{% endif %}>Chart</a>
+            {% if user.is_authenticated %}
             <a href="/receivers/" {% if request.path == "/receivers/" %}class="active"{% endif %}>Top Receivers</a>
             <a href="/givers/" {% if request.path == "/givers/" %}class="active"{% endif %}>Top Givers</a>
             <a href="/posts/" {% if request.path == "/posts/" %}class="active"{% endif %}>Top Posts</a>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Log out</button>
+            </form>
+            {% else %}
+            <a href="{% url 'login' %}" {% if request.path == "/login/" %}class="active"{% endif %}>Log in</a>
+            {% endif %}
         </nav>
         {% block content %}{% endblock %}
     </div>
