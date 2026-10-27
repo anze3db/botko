@@ -1,8 +1,8 @@
 import logging
+from collections.abc import Callable
 
 from django.db.models import F
 from slack_sdk.errors import SlackApiError
-from slack_sdk.http_retry.builtin_handlers import RateLimitErrorRetryHandler
 from slack_sdk.web.client import WebClient
 
 from bot.models import Channel, SlackUser
@@ -47,30 +47,31 @@ def refresh_channel(slack_id: str, client: WebClient) -> Channel | None:
 
 
 def refresh_stale_profiles(client: WebClient):
-    # Ensure client has rate limit retry handler
-    if not any(
-        isinstance(h, RateLimitErrorRetryHandler) for h in client.retry_handlers
-    ):
-        client.retry_handlers.append(RateLimitErrorRetryHandler(max_retry_count=3))
-
-    # Process users in batches
-    stale_users = SlackUser.objects.filter(display_name=F("slack_id"))[:BATCH_SIZE]
+    # Oldest first, so profiles that keep failing don't crowd out the rest
+    stale_users = SlackUser.objects.filter(display_name=F("slack_id")).order_by(
+        "updated_at"
+    )[:BATCH_SIZE]
     for user in stale_users:
-        try:
-            refresh_user(user.slack_id, client)
-        except SlackApiError as e:
-            logger.error("Slack API error refreshing user %s: %s", user.slack_id, e)
-        except Exception:
-            logger.exception("Unexpected error refreshing user %s", user.slack_id)
+        _refresh_or_requeue(user, refresh_user, client)
 
-    # Process channels in batches
-    stale_channels = Channel.objects.filter(name=F("slack_id"))[:BATCH_SIZE]
+    stale_channels = Channel.objects.filter(name=F("slack_id")).order_by("updated_at")[
+        :BATCH_SIZE
+    ]
     for channel in stale_channels:
-        try:
-            refresh_channel(channel.slack_id, client)
-        except SlackApiError as e:
-            logger.error(
-                "Slack API error refreshing channel %s: %s", channel.slack_id, e
-            )
-        except Exception:
-            logger.exception("Unexpected error refreshing channel %s", channel.slack_id)
+        _refresh_or_requeue(channel, refresh_channel, client)
+
+
+def _refresh_or_requeue(
+    obj: SlackUser | Channel,
+    refresh: Callable[[str, WebClient], object],
+    client: WebClient,
+):
+    try:
+        refresh(obj.slack_id, client)
+        return
+    except SlackApiError as e:
+        logger.error("Slack API error refreshing %s: %s", obj.slack_id, e)
+    except Exception:
+        logger.exception("Unexpected error refreshing %s", obj.slack_id)
+    # Bump updated_at to move it behind the other stale rows for the next run
+    obj.save(update_fields=["updated_at"])
