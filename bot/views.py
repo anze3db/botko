@@ -4,9 +4,10 @@ from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.db.models.functions import TruncMonth
-from django.shortcuts import render
+from django.http import FileResponse, Http404
+from django.shortcuts import get_object_or_404, render
 
-from bot.models import Karma
+from bot.models import Attachment, Karma
 
 
 def index(request):
@@ -64,4 +65,19 @@ def top_posts(request):
         request,
         "bot/top_posts.html",
         {"posts": Karma.top_messages(), "year": datetime.now().year},
+    )
+
+
+@login_required
+def attachment(request, attachment_id):
+    att = get_object_or_404(Attachment, id=attachment_id)
+    try:
+        file = att.file.open("rb")
+    except FileNotFoundError:
+        raise Http404("Attachment file is missing") from None
+    return FileResponse(
+        file,
+        as_attachment=not att.is_image,
+        filename=att.filename,
+        content_type=att.content_type if att.is_image else None,
     )

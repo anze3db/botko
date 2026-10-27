@@ -87,7 +87,7 @@ POTATOQ = {
     },
 }
 
-MEDIA_URL = "/media/"
+# Slack attachments, served by bot.views.attachment to logged in users
 MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

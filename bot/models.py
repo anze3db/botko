@@ -47,6 +47,11 @@ class Message(models.Model):
         return f"Message by {self.user} at {self.ts}"
 
 
+# Shown inline on the top posts page. Anything else, SVG included, can carry
+# scripts, so it is only served as a download.
+INLINE_IMAGE_TYPES = ("image/png", "image/jpeg", "image/gif", "image/webp")
+
+
 class Attachment(models.Model):
     message = models.ForeignKey(
         Message, on_delete=models.CASCADE, related_name="attachments"
@@ -60,6 +65,10 @@ class Attachment(models.Model):
 
     def __str__(self):
         return f"Attachment {self.filename} on {self.message}"
+
+    @property
+    def is_image(self):
+        return self.content_type in INLINE_IMAGE_TYPES
 
 
 class Karma(models.Model):

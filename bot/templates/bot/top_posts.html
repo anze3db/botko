@@ -16,8 +16,10 @@
     </div>
     <div class="post-text">{{ post.message.text }}</div>
     {% for att in post.message.attachments.all %}
-        {% if att.content_type and "image" in att.content_type and att.file %}
-        <img class="post-image" src="{{ att.file.url }}" alt="{{ att.filename }}">
+        {% if att.is_image %}
+        <img class="post-image" src="{% url 'attachment' att.id %}" alt="{{ att.filename }}">
+        {% else %}
+        <a class="post-file" href="{% url 'attachment' att.id %}">{{ att.filename }}</a>
         {% endif %}
     {% endfor %}
     <div class="emoji-badges">
