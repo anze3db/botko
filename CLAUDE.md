@@ -42,8 +42,10 @@ Django + PostgreSQL. Two-process system:
 2. **Worker** (`python manage.py potatoq worker`) - A [potatoq](https://anze3db.github.io/potatoq/) worker that uses the Django database as its broker and runs `POTATOQ["beat_schedule"]` from `botko/settings.py`. The `daily-report` task runs at 10:00 Europe/Lisbon (`POTATOQ["timezone"]`) and posts monthly/yearly karma reports and birthday wishes to a hardcoded Slack channel (`C6LKA38DA`). Deployed as the `botko-scheduler` systemd service.
 
 Single Django app: `bot/`
-- `bot/models.py` - Django ORM models (`Karma`, `Birthday`) with classmethod query helpers
-- `bot/slack_app.py` - Slack Bolt `App` instance and all message/event handlers
+- `bot/models.py` - Django ORM models (`Karma`, `Birthday`, and `SlackUser`, `Channel`, `Message`, `Attachment` for the messages the bot sees) with classmethod query helpers
+- `bot/slack_app.py` - Slack Bolt `App` instance and all message/event handlers. Logs every message and downloads its files to `MEDIA_ROOT`
+- `bot/slack_cache.py` - Fills in Slack names and avatars for users and channels, run from `daily_report`
+- `bot/views.py` - Public karma chart; login-only leaderboards, top posts and attachment downloads
 - `bot/slack_urls.py` - Wires Slack Bolt into Django URL routing
 - `bot/tasks.py` - potatoq tasks (`daily_report`) and the report/birthday jobs they run
 - `bot/utils.py` - `KARMA_EMOJIS` tuple and `parse_karma_from_text()` regex parser
