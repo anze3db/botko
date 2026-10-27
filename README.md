@@ -35,6 +35,12 @@ uv run python manage.py runserver
 ```
 
 You'll need to set the `SLACK_BOT_TOKEN` and `SLACK_SIGNING_SECRET` `env` variables from https://api.slack.com/apps/
+The bot token needs the `files:read` scope to save the files people share.
+
+The karma chart at `/` is public. The leaderboards and top posts need an account:
+```
+uv run python manage.py createsuperuser
+```
 
 
 If you want Slack to be able to hit your server you'll also need to run `ngrok`:

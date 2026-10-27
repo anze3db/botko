@@ -9,6 +9,7 @@ from urllib3 import PoolManager, Retry
 
 from bot.models import Birthday, Karma
 from bot.slack_app import app
+from bot.slack_cache import refresh_stale_profiles
 
 logger = logging.getLogger(__name__)
 
@@ -200,6 +201,9 @@ def job(client: WebClient):
     for birthday in Birthday.for_today():
         logger.info("Reporting birthday for user %s", birthday.user)
         report_birthdays(client, birthday.user)
+
+    # Refresh stale Slack profiles
+    refresh_stale_profiles(client)
 
     # Heartbeat
     if heartbeat_url := os.environ.get("HEARTBEAT_URL"):

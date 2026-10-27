@@ -1,6 +1,74 @@
+from collections import defaultdict
 from datetime import datetime, timedelta
 
 from django.db import models
+
+
+class SlackUser(models.Model):
+    slack_id = models.CharField(max_length=20, unique=True, db_index=True)
+    display_name = models.TextField(blank=True, default="")
+    real_name = models.TextField(blank=True, default="")
+    avatar_url = models.URLField(max_length=500, blank=True, default="")
+    is_bot = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.display_name or self.slack_id} ({self.slack_id})"
+
+
+class Channel(models.Model):
+    slack_id = models.CharField(max_length=20, unique=True, db_index=True)
+    name = models.TextField(blank=True, default="")
+    is_private = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"#{self.name or self.slack_id} ({self.slack_id})"
+
+
+class Message(models.Model):
+    channel = models.ForeignKey(
+        Channel, on_delete=models.CASCADE, related_name="messages"
+    )
+    user = models.ForeignKey(
+        SlackUser, on_delete=models.CASCADE, related_name="messages"
+    )
+    ts = models.CharField(max_length=50, db_index=True)
+    thread_ts = models.CharField(max_length=50, blank=True, default="")
+    text = models.TextField(blank=True, default="")
+    created_at = models.DateTimeField(default=datetime.now)
+
+    class Meta:
+        unique_together = [("channel", "ts")]
+
+    def __str__(self):
+        return f"Message by {self.user} at {self.ts}"
+
+
+# Shown inline on the top posts page. Anything else, SVG included, can carry
+# scripts, so it is only served as a download.
+INLINE_IMAGE_TYPES = ("image/png", "image/jpeg", "image/gif", "image/webp")
+
+
+class Attachment(models.Model):
+    message = models.ForeignKey(
+        Message, on_delete=models.CASCADE, related_name="attachments"
+    )
+    slack_file_id = models.CharField(max_length=50, blank=True, default="")
+    original_url = models.URLField(max_length=1000, blank=True, default="")
+    file = models.FileField(upload_to="attachments/%Y/%m/")
+    filename = models.TextField(blank=True, default="")
+    content_type = models.CharField(max_length=100, blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Attachment {self.filename} on {self.message}"
+
+    @property
+    def is_image(self):
+        return self.content_type in INLINE_IMAGE_TYPES
 
 
 class Karma(models.Model):
@@ -10,14 +78,80 @@ class Karma(models.Model):
     emoji = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(default=datetime.now)
 
+    giver = models.ForeignKey(
+        SlackUser,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="karma_given",
+    )
+    receiver = models.ForeignKey(
+        SlackUser,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="karma_received",
+    )
+    channel_ref = models.ForeignKey(
+        Channel,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="karma_events",
+    )
+    message = models.ForeignKey(
+        Message,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="karma_events",
+    )
+
     def __str__(self):
         return f"{self.user} in {self.channel}"
 
     @classmethod
-    def give_karma(cls, channel: str, ts: str, users: list[str]):
-        cls.objects.bulk_create(
-            [cls(channel=channel, ts=ts, user=user) for user in users]
+    def give_karma(
+        cls,
+        channel: str,
+        ts: str,
+        users: list[str],
+        giver_slack_id: str | None = None,
+        emoji: str | None = None,
+    ):
+        giver_obj = None
+        if giver_slack_id:
+            giver_obj, _ = SlackUser.objects.get_or_create(
+                slack_id=giver_slack_id,
+                defaults={"display_name": giver_slack_id},
+            )
+
+        channel_obj, _ = Channel.objects.get_or_create(
+            slack_id=channel,
+            defaults={"name": channel},
         )
+
+        message_obj = Message.objects.filter(channel=channel_obj, ts=ts).first()
+
+        karma_objects = []
+        for user_id in users:
+            receiver_obj, _ = SlackUser.objects.get_or_create(
+                slack_id=user_id,
+                defaults={"display_name": user_id},
+            )
+            karma_objects.append(
+                cls(
+                    channel=channel,
+                    ts=ts,
+                    user=user_id,
+                    emoji=emoji,
+                    giver=giver_obj,
+                    receiver=receiver_obj,
+                    channel_ref=channel_obj,
+                    message=message_obj,
+                )
+            )
+        cls.objects.bulk_create(karma_objects)
 
     @classmethod
     def leaderboard(cls):
@@ -55,6 +189,60 @@ class Karma(models.Model):
             .annotate(count=models.Count("id"))
             .order_by("-count", "user")
         )
+
+    @classmethod
+    def receiver_leaderboard(cls, limit=50):
+        return cls._people_leaderboard("receiver", limit)
+
+    @classmethod
+    def giver_leaderboard(cls, limit=50):
+        return cls._people_leaderboard("giver", limit)
+
+    @classmethod
+    def _people_leaderboard(cls, person: str, limit: int):
+        year = datetime.now().year
+        return (
+            cls.objects.filter(created_at__year=year, **{f"{person}__isnull": False})
+            .values(
+                slack_id=models.F(f"{person}__slack_id"),
+                display_name=models.F(f"{person}__display_name"),
+                avatar_url=models.F(f"{person}__avatar_url"),
+            )
+            .annotate(count=models.Count("id"))
+            .order_by("-count", "display_name")[:limit]
+        )
+
+    @classmethod
+    def top_messages(cls, limit=30):
+        year = datetime.now().year
+        this_year = cls.objects.filter(created_at__year=year, message__isnull=False)
+        counts = list(
+            this_year.values("message_id")
+            .annotate(karma_count=models.Count("id"))
+            .order_by("-karma_count", "message_id")[:limit]
+        )
+        message_ids = [row["message_id"] for row in counts]
+        messages = (
+            Message.objects.select_related("user", "channel")
+            .prefetch_related("attachments")
+            .in_bulk(message_ids)
+        )
+        emojis = defaultdict(list)
+        for row in (
+            this_year.filter(message_id__in=message_ids, emoji__isnull=False)
+            .values("message_id", "emoji")
+            .annotate(count=models.Count("id"))
+            .order_by("-count", "emoji")
+        ):
+            emojis[row["message_id"]].append(row)
+        return [
+            {
+                "message": messages[row["message_id"]],
+                "karma_count": row["karma_count"],
+                "emojis": emojis[row["message_id"]],
+            }
+            for row in counts
+        ]
 
 
 class Birthday(models.Model):
