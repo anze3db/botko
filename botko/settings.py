@@ -42,6 +42,12 @@ WSGI_APPLICATION = "botko.wsgi.application"
 DATABASES = {
     "default": env.db(),
 }
+# Drop connections that died (e.g. in a Postgres restart) before reusing them.
+DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
+if DATABASES["default"]["ENGINE"] == "django.db.backends.postgresql":
+    # Waits for Postgres to come back when it restarts (unattended-upgrades).
+    # The name must end in "postgresql": potatoq checks that to use it as its broker.
+    DATABASES["default"]["ENGINE"] = "botko.db.postgresql"
 
 USE_TZ = False
 # Django exports TIME_ZONE as the process's TZ, so it decides what datetime.now() returns.
